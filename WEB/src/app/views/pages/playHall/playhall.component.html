@@ -70,7 +70,7 @@
               <button cButton color="info" size="sm">Auto mode</button>
               <button cButton color="info" size="sm">Fast Mode (No logs)</button>
               <button cButton color="info" size="sm">3 Door 10 sets auto mean</button>
-              <button cButton color="danger" size="sm" (click)="reset()">Reset</button>
+              <button cButton color="danger" size="sm" (click)="resetDoors()">Reset</button>
             </div>
           </c-row>
         </c-card-body>
@@ -122,3 +122,18 @@
   </c-row>
 
 </c-container>
+
+<c-modal #verticallyCenteredModal alignment="center" id="switchModal" [visible]="visible" (visibleChange)="handleSwitchModel($event)">
+  <c-modal-header>
+    <h5 cModalTitle>Switch</h5>
+  </c-modal-header>
+  <c-modal-body>You have selected door {{contestSelectedDoor}}. Do you want to switch?</c-modal-body>
+  <c-modal-footer>
+    <button (click)="switch(true)" cButton color="primary">
+      Yes
+    </button>
+    <button (click)="switch(false)" cButton color="primary">
+      No
+    </button>
+  </c-modal-footer>
+</c-modal>

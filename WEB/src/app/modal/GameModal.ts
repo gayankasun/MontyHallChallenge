@@ -1,10 +1,9 @@
-export class Game {
-	RoundNumber!: number;
-	DN_with_Car!: number;
-	DN_of_Player_Choice!: number;
-	DN_of_Host_shows!: number;
-	IsSwitch!: boolean;
-    Result! : Result
+export class GameRequest {
+	ContestSelectedDoor!: number;
+	HostOpenedDoor!: number;
+	DoorWithCar!: number;
+	SimulationType!: SimulationType;
+	IsSwitched!: boolean;
 }
 
 export enum Result {
@@ -14,7 +13,7 @@ export enum Result {
 
 export enum SimulationType
 {
-   single= 1,
+   Single= 1,
    Auto = 2,
    Custom = 3
 }
@@ -24,5 +23,11 @@ export class Response {
     RoundNumber!: number; 
     SimulationType!: SimulationType;
     DN_with_Car!: number;
+}
+
+export enum Switch
+{
+   Yes = 1,
+   No = 0
 }
 

@@ -1,7 +1,8 @@
 ﻿using API.Modal;
 using Microsoft.AspNetCore.Mvc;
 using MontyHallChallengeAPI.Modal;
-using System.Reflection.Metadata.Ecma335;
+using System.Diagnostics;
+
 
 namespace MontyHallChallenge.Controllers
 {
@@ -14,59 +15,60 @@ namespace MontyHallChallenge.Controllers
         [Route("new")]
         public Response RequestNewGame()
         {
+            List<int> doorList = new List<int>() { 1, 2, 3 };
+            int setCarIntoDoor = Random.Shared.Next(1, 4);
+            doorList.RemoveAt(doorList.IndexOf(setCarIntoDoor));
+
+            int indexDoorHostOpen = Random.Shared.Next(doorList.Count);
+            int setDoorHostOpen = doorList[indexDoorHostOpen];
+
+
             return new Response
             {
                 RoundNumber = 1,
-                DN_with_Car = Random.Shared.Next(1,4),
+                DN_with_Car = setCarIntoDoor,
+                DN_host_will_open = setDoorHostOpen,
                 SimulationType = SimulationType.single
             };
         }
 
+        
         [HttpPost]
-        [Route("Request")]
-        public Game Simulator(SimulateRequest request)
+        [Route("getResult")]
+        public GameResult Simulator(GameRequest request)
         {
-            Game result = new Game();
-
-            result.DN_of_Player_Choice = request.SelectedDoor;
-            result.DN_with_Car = Random.Shared.Next(3);
+            GameResult result = new GameResult();
+            List<int> doorList = new List<int>() { 1, 2, 3 };
 
 
-            if (request.SimulationType == (int)SimulationType.single)
+            if (request.IsSwitched)
             {
+                doorList.RemoveAt(doorList.IndexOf(request.ContestSelectedDoor));
+                doorList.RemoveAt(doorList.IndexOf(request.HostOpenedDoor));
+                result.DN_Result_shows = doorList[0];
+            }
+            else
+            {
+                result.DN_Result_shows = request.ContestSelectedDoor;
+            }
 
+            result.DN_Contest_Choice = request.ContestSelectedDoor;
+            result.DN_with_Car = request.DoorWithCar;
+            result.IsSwitch = request.IsSwitched;
 
-                //result = new Game
-                //{
-                //    RoundNumber = 1,
-                //    DN_with_Car = Random.Shared.Next(1, 4),
-                //    DN_of_Choice = Random.Shared.Next(1, 4),
-                //    IsSwitch = true,
-                //    Result = Result.Lost
-                //};
+      
+
+            if (result.DN_Result_shows == request.ContestSelectedDoor )
+            {
+                result.Result = Result.Won;
+            }
+            else
+            {
+                result.Result = Result.Lost;
             }
 
             return result;
         }
 
-
-        private void Run(int playerPickedDoor)
-        {
-            bool IsPlayerWin = false;
-            int probDoorForGoatX;
-            int probDoorForGoatY;
-
-
-            switch (playerPickedDoor)
-            {
-                case 1: probDoorForGoatX = 2; probDoorForGoatY = 3; break;
-                case 2: probDoorForGoatX = 1; probDoorForGoatY = 3; break;
-                case 3: probDoorForGoatX = 1; probDoorForGoatY = 2; break;
-            }
-
-
-
-       
-        }
     }
 }

@@ -1,11 +1,11 @@
 ﻿namespace MontyHallChallengeAPI.Modal
 {
-    public class Game
+    public class GameResult
     {
         public int RoundNumber { get; set; }
         public int DN_with_Car { get; set; }
-        public int DN_of_Player_Choice { get; set; }
-        public int DN_of_Host_shows { get; set; }
+        public int DN_Contest_Choice { get; set; }
+        public int DN_Result_shows { get; set; }
         public bool IsSwitch { get; set; }
         public Result Result { get; set; }
 
