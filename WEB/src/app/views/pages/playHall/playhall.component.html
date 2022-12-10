@@ -1,41 +1,123 @@
-<div class="bg-light min-vh-100 d-flex flex-row align-items-center">
-  <c-container>
-    <c-row class="justify-content-center">
-      <c-col lg="7" md="9" xl="6">
-        <c-card class="mx-4">
-          <c-card-body class="p-4">
-            <form cForm>
-              <h1>Register</h1>
-              <p class="text-medium-emphasis">Create your account</p>
-              <c-input-group class="mb-3">
-                <span cInputGroupText>
-                  <svg cIcon name="cilUser"></svg>
-                </span>
-                <input autoComplete="name" cFormControl placeholder="Username" />
-              </c-input-group>
-              <c-input-group class="mb-3">
-                <span cInputGroupText>@</span>
-                <input autoComplete="email" cFormControl placeholder="Email" />
-              </c-input-group>
-              <c-input-group class="mb-3">
-                <span cInputGroupText>
-                  <svg cIcon name="cilLockLocked"></svg>
-                </span>
-                <input autoComplete="new-password" cFormControl placeholder="Password" type="password" />
-              </c-input-group>
-              <c-input-group class="mb-4">
-                <span cInputGroupText>
-                  <svg cIcon name="cilLockLocked"></svg>
-                </span>
-                <input autoComplete="new-password" cFormControl placeholder="Repeat password" type="password" />
-              </c-input-group>
-              <div class="d-grid">
-                <button cButton color="success">Create Account</button>
-              </div>
-            </form>
-          </c-card-body>
-        </c-card>
-      </c-col>
-    </c-row>
-  </c-container>
-</div>
+<c-container fluid>
+  <br>
+  <c-row>
+    <c-col xs="6" sm="3">
+      <c-card>
+        <c-card-body>
+          <h5 cCardTitle>3 Door Simulation</h5>
+          <c-row>
+            <c-form-check>
+              <input cFormCheckInput type="radio" value="one" name="flexRadioDefault" />
+              <label cFormCheckLabel>Switch Strategy</label>
+            </c-form-check>
+            <c-form-check>
+              <input cFormCheckInput type="radio" value="two" name="flexRadioDefault" checked />
+              <label cFormCheckLabel>Keep Strategy</label>
+            </c-form-check>
+          </c-row><br>
+          <c-row>
+            <c-col xs="3" sm="3"><label cLabel for="lblRounds">Rounds</label></c-col>
+            <c-col><input cFormControl id="txtRound" type="text"></c-col>
+
+          </c-row><br>
+          <c-row>
+            <c-col><button cButton color="primary" size="sm">Play with Logs</button></c-col>
+            <c-col><button cButton color="warning" size="sm">Auto Play (No logs)</button></c-col>
+          </c-row>
+        </c-card-body>
+      </c-card>
+    </c-col>
+    <c-col>
+      <c-card>
+        <c-card-body>
+          <h5 cCardTitle>Play console logs</h5>
+
+        </c-card-body>
+      </c-card>
+    </c-col>
+    <c-col xs="6" sm="3">
+      <c-card>
+        <c-card-body>
+          <h5 cCardTitle>Results</h5>
+          <c-row>
+            <c-col xs="3" sm="3"><label cLabel for="lblWon">Won</label></c-col>
+            <c-col><input cFormControl id="txtWon" type="text" readonly></c-col>
+          </c-row><br>
+          <c-row>
+            <c-col xs="3" sm="3"><label cLabel for="lblWon">Lost</label></c-col>
+            <c-col><input cFormControl id="txtWon" type="text" readonly></c-col>
+          </c-row><br>
+          <c-row>
+            <c-col xs="3" sm="3"><label cLabel for="lblWinning">Winning %</label></c-col>
+            <c-col><input cFormControl id="txtWinning" type="text" readonly></c-col>
+          </c-row>
+        </c-card-body>
+      </c-card>
+    </c-col>
+  </c-row>
+</c-container>
+<br>
+<c-container fluid>
+  <c-row>
+    <c-col xs="4" sm="2">
+      <c-card>
+        <c-card-body>
+          <h5 cCardTitle>Play Controls</h5>
+          <c-row>
+            <div class="d-grid gap-2 col-6 mx-auto">
+              <button cButton color="success" size="sm">Show Logs</button>
+              <button cButton color="warning" size="sm">Hide Logs</button>
+              <button cButton color="danger" size="sm">Auto mode</button>
+              <button cButton color="danger" size="sm">Fast Mode (No logs)</button>
+              <button cButton color="info" size="sm">3 Door 10 sets auto mean</button>
+            </div>
+          </c-row>
+        </c-card-body>
+      </c-card>
+    </c-col>
+    <c-col>
+      <c-card>
+        <c-card-body>
+          <c-row>
+            <c-col><img cImg fluid src="../../../../assets/images/Door Close.png" /></c-col>
+            <c-col><img cImg fluid src="../../../../assets/images/Door Close.png" /></c-col>
+            <c-col><img cImg fluid src="../../../../assets/images/Door Close.png" /></c-col>
+          </c-row>
+        </c-card-body>
+      </c-card>
+    </c-col>
+
+  </c-row>
+</c-container>
+<br>
+<c-container fluid>
+  <c-row>
+    <c-col xs="3" sm="3">
+      <c-card>
+        <c-card-body>
+          <h5 cCardTitle>Custom Simulation</h5>
+          <c-row>
+            <c-col xs="3" sm="3"><label cLabel for="lblCustomDoors">Doors</label></c-col>
+            <c-col><input cFormControl id="txtCustomDoors" type="text"></c-col>
+          </c-row><br>
+          <c-row>
+            <c-col xs="3" sm="3"><label cLabel for="lblCustomRounds">Rounds</label></c-col>
+            <c-col><input cFormControl id="txtCustomRounds" type="text"></c-col>
+          </c-row><br>
+          <c-row>
+            <c-col xs="3" sm="3"><label cLabel for="lblCustomSets">Sets</label></c-col>
+            <c-col><input cFormControl id="txtCustomSets" type="text"></c-col>
+          </c-row>
+        </c-card-body>
+      </c-card>
+    </c-col>
+    <c-col xs="9" sm="3">
+      <c-card>
+        <c-card-body>
+
+        </c-card-body>
+      </c-card>
+    </c-col>
+  </c-row>
+
+</c-container>

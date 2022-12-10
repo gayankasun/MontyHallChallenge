@@ -11,7 +11,6 @@ import { playHallComponent } from './playHall/playhall.component';
 import { ButtonModule, CardModule, FormModule, GridModule } from '@coreui/angular';
 import { IconModule } from '@coreui/icons-angular';
 
-
 @NgModule({
   declarations: [
     LoginComponent,
