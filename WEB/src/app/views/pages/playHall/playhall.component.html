@@ -67,9 +67,10 @@
             <div class="d-grid gap-2 col-6 mx-auto">
               <button cButton color="success" size="sm">Show Logs</button>
               <button cButton color="warning" size="sm">Hide Logs</button>
-              <button cButton color="danger" size="sm">Auto mode</button>
-              <button cButton color="danger" size="sm">Fast Mode (No logs)</button>
+              <button cButton color="info" size="sm">Auto mode</button>
+              <button cButton color="info" size="sm">Fast Mode (No logs)</button>
               <button cButton color="info" size="sm">3 Door 10 sets auto mean</button>
+              <button cButton color="danger" size="sm" (click)="reset()">Reset</button>
             </div>
           </c-row>
         </c-card-body>
@@ -79,9 +80,9 @@
       <c-card>
         <c-card-body>
           <c-row>
-            <c-col><img cImg fluid src="../../../../assets/images/Door Close.png" /></c-col>
-            <c-col><img cImg fluid src="../../../../assets/images/Door Close.png" /></c-col>
-            <c-col><img cImg fluid src="../../../../assets/images/Door Close.png" /></c-col>
+            <c-col><img cImg fluid src={{d1ImageSrc}} (click)="clickOnDoor(1)" /></c-col>
+            <c-col><img cImg fluid src={{d2ImageSrc}} (click)="clickOnDoor(2)" /></c-col>
+            <c-col><img cImg fluid src={{d3ImageSrc}} (click)="clickOnDoor(3)" /></c-col>
           </c-row>
         </c-card-body>
       </c-card>

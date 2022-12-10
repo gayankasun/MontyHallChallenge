@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'https://dce-workspace-dev.azurewebsites.net/web-api/api/v1.0/',
+  apiUrl: 'https://localhost:7266/',
 };
 
 /*

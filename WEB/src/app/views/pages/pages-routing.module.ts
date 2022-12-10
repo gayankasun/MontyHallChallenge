@@ -37,7 +37,7 @@ const routes: Routes = [
     }
   },
   {
-    path: 'play-hall',
+    path: 'playHall',
     component: playHallComponent,
     data: {
       title: 'Play Hall'
