@@ -8,7 +8,7 @@ import { Page404Component } from './page404/page404.component';
 import { Page500Component } from './page500/page500.component';
 import { playHallComponent } from './playHall/playhall.component';
 
-import { ButtonModule, CardModule, FormModule, GridModule, ModalModule, ToastModule  } from '@coreui/angular';
+import { ButtonModule, CardModule, FormModule, GridModule, ModalModule, ToastModule ,TableModule, UtilitiesModule } from '@coreui/angular';
 import { IconModule } from '@coreui/icons-angular';
 @NgModule({
   declarations: [
@@ -27,7 +27,9 @@ import { IconModule } from '@coreui/icons-angular';
     IconModule,
     FormModule,
     ModalModule,
-    ToastModule
+    ToastModule,
+    TableModule,
+    UtilitiesModule
   ]
 })
 export class PagesModule {

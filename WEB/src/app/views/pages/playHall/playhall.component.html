@@ -19,7 +19,7 @@
             <c-row>
               <c-col xs="3" sm="3"><label cLabel for="lblRounds">Rounds</label></c-col>
               <c-col><input cFormControl id="txtRound" type="text"></c-col>
-  
+
             </c-row><br>
             <c-row>
               <c-col><button cButton color="primary" size="sm">Play with Logs</button></c-col>
@@ -32,7 +32,28 @@
         <c-card>
           <c-card-body>
             <h5 cCardTitle>Play console logs</h5>
-  
+            <div class="overflow-auto">
+              <table cTable>
+                <thead>
+                  <tr>
+                    <th scope="col">Round #</th>
+                    <th scope="col">Car</th>
+                    <th scope="col">Choice</th>
+                    <th scope="col">IsSwitch</th>
+                    <th scope="col">Result</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr  *ngFor="let log of gameLogs">
+                    <th>{{log.Round}}</th>
+                    <td>{{log.DoorWithCar}}</td>
+                    <td>{{log.ContestSelectedDoor}}</td>
+                    <td>{{log.IsSwitched}}</td>
+                    <td>{{log.Result}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </c-card-body>
         </c-card>
       </c-col>
@@ -88,7 +109,7 @@
           </c-card-body>
         </c-card>
       </c-col>
-  
+
     </c-row>
   </c-container>
   <br>
@@ -116,15 +137,16 @@
       <c-col xs="9" sm="3">
         <c-card>
           <c-card-body>
-  
+
           </c-card-body>
         </c-card>
       </c-col>
     </c-row>
-  
+
   </c-container>
-  
-  <c-modal #verticallyCenteredModal alignment="center" id="switchModal" [visible]="visible" (visibleChange)="handleSwitchModel($event)">
+
+  <c-modal #verticallyCenteredModal alignment="center" id="switchModal" [visible]="visible"
+    (visibleChange)="handleSwitchModel($event)">
     <c-modal-header>
       <h5 cModalTitle>Switch</h5>
     </c-modal-header>
@@ -138,12 +160,11 @@
       </button>
     </c-modal-footer>
   </c-modal>
-  
-    <c-toaster placement="middle-center" position="absolute">
-    <c-toast [autohide]="true" [visible]="showToast"  color={{resultColor}} >
-    <c-toast-body>{{msgResult}}</c-toast-body>
+
+  <c-toaster placement="middle-center" position="absolute">
+    <c-toast [autohide]="true" [visible]="showToast" color={{resultColor}}>
+      <c-toast-body>{{msgResult}}</c-toast-body>
     </c-toast>
-    </c-toaster>
+  </c-toaster>
 
 </c-container>
-

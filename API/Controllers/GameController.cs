@@ -72,5 +72,29 @@ namespace MontyHallChallenge.Controllers
             return result;
         }
 
+        private Response InitNewGame(int doorNumber)
+        {
+            List<int> doorList = new List<int>() { 1, 2, 3 };
+            int setCarIntoDoor = Random.Shared.Next(1, 4);
+            doorList.RemoveAt(doorList.IndexOf(setCarIntoDoor));
+            if (doorNumber != setCarIntoDoor)
+            {
+                doorList.RemoveAt(doorList.IndexOf(doorNumber));
+            }
+
+
+            int indexDoorHostOpen = Random.Shared.Next(doorList.Count);
+            int setDoorHostOpen = doorList[indexDoorHostOpen];
+
+
+            return new Response
+            {
+                RoundNumber = 1,
+                DN_with_Car = setCarIntoDoor,
+                DN_host_going_to_open = setDoorHostOpen,
+                SimulationType = SimulationType.single
+            };
+        }
+
     }
 }

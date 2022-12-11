@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ToasterComponent, ToasterPlacement } from '@coreui/angular';
-import { GameRequest, Result, ResultColor, SimulationType, Switch } from 'src/app/modal/GameModal';
+import { GameLog, GameRequest, Result, SimulationType } from 'src/app/modal/GameModal';
 import { PalyService } from '../../../services/paly.service';
 
 @Component({
@@ -27,11 +27,16 @@ export class playHallComponent {
   gameRequest: GameRequest;
   msgResult!: string;
   resultColor!: string;
+  gameLogs : Array<GameLog> = [];
 
-  ngOnInit(): void {}
+
+  ngOnInit(): void {
+  }
 
   clickOnDoor(doorNumber: number): void {
     this.resetDoors();
+
+  
     this.contestSelectedDoor = doorNumber;   
     this.showToast = false;
     this.playService.requestNew(this.contestSelectedDoor).subscribe((res: any) => {
@@ -39,7 +44,9 @@ export class playHallComponent {
       this.hostOpenedDoorNumber = res.dN_host_going_to_open;
       this.doorNumberWithCar = res.dN_with_Car;
       this.arrangeDoors(this.doorNumberWithCar, this.hostOpenedDoorNumber);
+      
       this.visible = true;
+
     });
 
   }
@@ -99,11 +106,20 @@ export class playHallComponent {
     this.gameRequest.HostOpenedDoor = this.hostOpenedDoorNumber;
     this.gameRequest.DoorWithCar = this.doorNumberWithCar; 
     this.gameRequest.IsSwitched = isSwitch;
-    this.gameRequest.SimulationType = SimulationType.Single
+    this.gameRequest.SimulationType = SimulationType.single;
 
     this.playService.getResult(this.gameRequest).subscribe((res: any) => {
       console.log(res);
+      let gameLog =  new GameLog();
+      gameLog.Round = res.roundNumber;
+      gameLog.Round= res.roundNumber;
+      gameLog.DoorWithCar= res.dN_with_Car;
+      gameLog.ContestSelectedDoor= res.dN_Contest_Choice;
+      gameLog.IsSwitched= res.isSwitch;
+      gameLog.Result= res.result;
 
+      this.gameLogs.push(gameLog);
+      
       this.visible = !this.visible;
       this.showResult(res.dN_with_Car);
       if(res.result == Result.Won){

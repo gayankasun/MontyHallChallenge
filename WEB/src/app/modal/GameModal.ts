@@ -11,14 +11,9 @@ export enum Result {
     Won = 1
 }
 
-export enum ResultColor {
-    Won = 'success',
-    Lost = 'danger'
-}
-
 export enum SimulationType
 {
-   Single= 1,
+   single= 1,
    Auto = 2,
    Custom = 3
 }
@@ -34,5 +29,13 @@ export enum Switch
 {
    Yes = 1,
    No = 0
+}
+
+export class GameLog {
+	ContestSelectedDoor!: number;
+	DoorWithCar!: number;
+	IsSwitched!: boolean;
+    Round:number = 0;
+    Result!: Result;
 }
 
