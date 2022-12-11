@@ -1,139 +1,149 @@
 <c-container fluid>
+  <c-container fluid>
+    <br>
+    <c-row>
+      <c-col xs="6" sm="3">
+        <c-card>
+          <c-card-body>
+            <h5 cCardTitle>3 Door Simulation</h5>
+            <c-row>
+              <c-form-check>
+                <input cFormCheckInput type="radio" value="one" name="flexRadioDefault" />
+                <label cFormCheckLabel>Switch Strategy</label>
+              </c-form-check>
+              <c-form-check>
+                <input cFormCheckInput type="radio" value="two" name="flexRadioDefault" checked />
+                <label cFormCheckLabel>Keep Strategy</label>
+              </c-form-check>
+            </c-row><br>
+            <c-row>
+              <c-col xs="3" sm="3"><label cLabel for="lblRounds">Rounds</label></c-col>
+              <c-col><input cFormControl id="txtRound" type="text"></c-col>
+  
+            </c-row><br>
+            <c-row>
+              <c-col><button cButton color="primary" size="sm">Play with Logs</button></c-col>
+              <c-col><button cButton color="warning" size="sm">Auto Play (No logs)</button></c-col>
+            </c-row>
+          </c-card-body>
+        </c-card>
+      </c-col>
+      <c-col>
+        <c-card>
+          <c-card-body>
+            <h5 cCardTitle>Play console logs</h5>
+  
+          </c-card-body>
+        </c-card>
+      </c-col>
+      <c-col xs="6" sm="3">
+        <c-card>
+          <c-card-body>
+            <h5 cCardTitle>Results</h5>
+            <c-row>
+              <c-col xs="3" sm="3"><label cLabel for="lblWon">Won</label></c-col>
+              <c-col><input cFormControl id="txtWon" type="text" readonly></c-col>
+            </c-row><br>
+            <c-row>
+              <c-col xs="3" sm="3"><label cLabel for="lblWon">Lost</label></c-col>
+              <c-col><input cFormControl id="txtWon" type="text" readonly></c-col>
+            </c-row><br>
+            <c-row>
+              <c-col xs="3" sm="3"><label cLabel for="lblWinning">Winning %</label></c-col>
+              <c-col><input cFormControl id="txtWinning" type="text" readonly></c-col>
+            </c-row>
+          </c-card-body>
+        </c-card>
+      </c-col>
+    </c-row>
+  </c-container>
   <br>
-  <c-row>
-    <c-col xs="6" sm="3">
-      <c-card>
-        <c-card-body>
-          <h5 cCardTitle>3 Door Simulation</h5>
-          <c-row>
-            <c-form-check>
-              <input cFormCheckInput type="radio" value="one" name="flexRadioDefault" />
-              <label cFormCheckLabel>Switch Strategy</label>
-            </c-form-check>
-            <c-form-check>
-              <input cFormCheckInput type="radio" value="two" name="flexRadioDefault" checked />
-              <label cFormCheckLabel>Keep Strategy</label>
-            </c-form-check>
-          </c-row><br>
-          <c-row>
-            <c-col xs="3" sm="3"><label cLabel for="lblRounds">Rounds</label></c-col>
-            <c-col><input cFormControl id="txtRound" type="text"></c-col>
-
-          </c-row><br>
-          <c-row>
-            <c-col><button cButton color="primary" size="sm">Play with Logs</button></c-col>
-            <c-col><button cButton color="warning" size="sm">Auto Play (No logs)</button></c-col>
-          </c-row>
-        </c-card-body>
-      </c-card>
-    </c-col>
-    <c-col>
-      <c-card>
-        <c-card-body>
-          <h5 cCardTitle>Play console logs</h5>
-
-        </c-card-body>
-      </c-card>
-    </c-col>
-    <c-col xs="6" sm="3">
-      <c-card>
-        <c-card-body>
-          <h5 cCardTitle>Results</h5>
-          <c-row>
-            <c-col xs="3" sm="3"><label cLabel for="lblWon">Won</label></c-col>
-            <c-col><input cFormControl id="txtWon" type="text" readonly></c-col>
-          </c-row><br>
-          <c-row>
-            <c-col xs="3" sm="3"><label cLabel for="lblWon">Lost</label></c-col>
-            <c-col><input cFormControl id="txtWon" type="text" readonly></c-col>
-          </c-row><br>
-          <c-row>
-            <c-col xs="3" sm="3"><label cLabel for="lblWinning">Winning %</label></c-col>
-            <c-col><input cFormControl id="txtWinning" type="text" readonly></c-col>
-          </c-row>
-        </c-card-body>
-      </c-card>
-    </c-col>
-  </c-row>
-</c-container>
-<br>
-<c-container fluid>
-  <c-row>
-    <c-col xs="4" sm="2">
-      <c-card>
-        <c-card-body>
-          <h5 cCardTitle>Play Controls</h5>
-          <c-row>
-            <div class="d-grid gap-2 col-6 mx-auto">
-              <button cButton color="success" size="sm">Show Logs</button>
-              <button cButton color="warning" size="sm">Hide Logs</button>
-              <button cButton color="info" size="sm">Auto mode</button>
-              <button cButton color="info" size="sm">Fast Mode (No logs)</button>
-              <button cButton color="info" size="sm">3 Door 10 sets auto mean</button>
-              <button cButton color="danger" size="sm" (click)="resetDoors()">Reset</button>
-            </div>
-          </c-row>
-        </c-card-body>
-      </c-card>
-    </c-col>
-    <c-col>
-      <c-card>
-        <c-card-body>
-          <c-row>
-            <c-col><img cImg fluid src={{d1ImageSrc}} (click)="clickOnDoor(1)" /></c-col>
-            <c-col><img cImg fluid src={{d2ImageSrc}} (click)="clickOnDoor(2)" /></c-col>
-            <c-col><img cImg fluid src={{d3ImageSrc}} (click)="clickOnDoor(3)" /></c-col>
-          </c-row>
-        </c-card-body>
-      </c-card>
-    </c-col>
-
-  </c-row>
-</c-container>
-<br>
-<c-container fluid>
-  <c-row>
-    <c-col xs="3" sm="3">
-      <c-card>
-        <c-card-body>
-          <h5 cCardTitle>Custom Simulation</h5>
-          <c-row>
-            <c-col xs="3" sm="3"><label cLabel for="lblCustomDoors">Doors</label></c-col>
-            <c-col><input cFormControl id="txtCustomDoors" type="text"></c-col>
-          </c-row><br>
-          <c-row>
-            <c-col xs="3" sm="3"><label cLabel for="lblCustomRounds">Rounds</label></c-col>
-            <c-col><input cFormControl id="txtCustomRounds" type="text"></c-col>
-          </c-row><br>
-          <c-row>
-            <c-col xs="3" sm="3"><label cLabel for="lblCustomSets">Sets</label></c-col>
-            <c-col><input cFormControl id="txtCustomSets" type="text"></c-col>
-          </c-row>
-        </c-card-body>
-      </c-card>
-    </c-col>
-    <c-col xs="9" sm="3">
-      <c-card>
-        <c-card-body>
-
-        </c-card-body>
-      </c-card>
-    </c-col>
-  </c-row>
+  <c-container fluid>
+    <c-row>
+      <c-col xs="4" sm="2">
+        <c-card>
+          <c-card-body>
+            <h5 cCardTitle>Play Controls</h5>
+            <c-row>
+              <div class="d-grid gap-2 col-6 mx-auto">
+                <button cButton color="success" size="sm">Show Logs</button>
+                <button cButton color="warning" size="sm">Hide Logs</button>
+                <button cButton color="info" size="sm">Auto mode</button>
+                <button cButton color="info" size="sm">Fast Mode (No logs)</button>
+                <button cButton color="info" size="sm">3 Door 10 sets auto mean</button>
+                <button cButton color="danger" size="sm" (click)="resetDoors()">Reset</button>
+              </div>
+            </c-row>
+          </c-card-body>
+        </c-card>
+      </c-col>
+      <c-col>
+        <c-card>
+          <c-card-body>
+            <c-row>
+              <c-col><img cImg fluid src={{d1ImageSrc}} (click)="clickOnDoor(1)" /></c-col>
+              <c-col><img cImg fluid src={{d2ImageSrc}} (click)="clickOnDoor(2)" /></c-col>
+              <c-col><img cImg fluid src={{d3ImageSrc}} (click)="clickOnDoor(3)" /></c-col>
+            </c-row>
+          </c-card-body>
+        </c-card>
+      </c-col>
+  
+    </c-row>
+  </c-container>
+  <br>
+  <c-container fluid>
+    <c-row>
+      <c-col xs="3" sm="3">
+        <c-card>
+          <c-card-body>
+            <h5 cCardTitle>Custom Simulation</h5>
+            <c-row>
+              <c-col xs="3" sm="3"><label cLabel for="lblCustomDoors">Doors</label></c-col>
+              <c-col><input cFormControl id="txtCustomDoors" type="text"></c-col>
+            </c-row><br>
+            <c-row>
+              <c-col xs="3" sm="3"><label cLabel for="lblCustomRounds">Rounds</label></c-col>
+              <c-col><input cFormControl id="txtCustomRounds" type="text"></c-col>
+            </c-row><br>
+            <c-row>
+              <c-col xs="3" sm="3"><label cLabel for="lblCustomSets">Sets</label></c-col>
+              <c-col><input cFormControl id="txtCustomSets" type="text"></c-col>
+            </c-row>
+          </c-card-body>
+        </c-card>
+      </c-col>
+      <c-col xs="9" sm="3">
+        <c-card>
+          <c-card-body>
+  
+          </c-card-body>
+        </c-card>
+      </c-col>
+    </c-row>
+  
+  </c-container>
+  
+  <c-modal #verticallyCenteredModal alignment="center" id="switchModal" [visible]="visible" (visibleChange)="handleSwitchModel($event)">
+    <c-modal-header>
+      <h5 cModalTitle>Switch</h5>
+    </c-modal-header>
+    <c-modal-body>You have selected door #{{contestSelectedDoor}}. Do you want to switch?</c-modal-body>
+    <c-modal-footer>
+      <button (click)="switch(true)" cButton color="primary">
+        Yes
+      </button>
+      <button (click)="switch(false)" cButton color="primary">
+        No
+      </button>
+    </c-modal-footer>
+  </c-modal>
+  
+    <c-toaster placement="middle-center" position="absolute">
+    <c-toast [autohide]="true" [visible]="showToast"  color={{resultColor}} >
+    <c-toast-body>{{msgResult}}</c-toast-body>
+    </c-toast>
+    </c-toaster>
 
 </c-container>
 
-<c-modal #verticallyCenteredModal alignment="center" id="switchModal" [visible]="visible" (visibleChange)="handleSwitchModel($event)">
-  <c-modal-header>
-    <h5 cModalTitle>Switch</h5>
-  </c-modal-header>
-  <c-modal-body>You have selected door {{contestSelectedDoor}}. Do you want to switch?</c-modal-body>
-  <c-modal-footer>
-    <button (click)="switch(true)" cButton color="primary">
-      Yes
-    </button>
-    <button (click)="switch(false)" cButton color="primary">
-      No
-    </button>
-  </c-modal-footer>
-</c-modal>

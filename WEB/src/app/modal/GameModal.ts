@@ -11,6 +11,11 @@ export enum Result {
     Won = 1
 }
 
+export enum ResultColor {
+    Won = 'success',
+    Lost = 'danger'
+}
+
 export enum SimulationType
 {
    Single= 1,

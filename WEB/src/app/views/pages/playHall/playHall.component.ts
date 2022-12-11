@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { request } from 'http';
-import { GameRequest, SimulationType, Switch } from 'src/app/modal/GameModal';
+import { ToasterComponent, ToasterPlacement } from '@coreui/angular';
+import { GameRequest, Result, ResultColor, SimulationType, Switch } from 'src/app/modal/GameModal';
 import { PalyService } from '../../../services/paly.service';
 
 @Component({
@@ -20,37 +20,27 @@ export class playHallComponent {
   d3ImageForSet: string = "";
 
   visible = false;
+  showToast: boolean = false;
   contestSelectedDoor: number = 0;
   hostOpenedDoorNumber : number = 0;
   doorNumberWithCar: number = 0;
   gameRequest: GameRequest;
+  msgResult!: string;
+  resultColor!: string;
 
   ngOnInit(): void {}
 
   clickOnDoor(doorNumber: number): void {
-    switch (doorNumber) {
-      case 1: {
-        this.contestSelectedDoor = doorNumber;
-        break;
-      }
-      case 2: {
-        this.contestSelectedDoor = doorNumber;
-        break;
-      }
-      case 3: {
-        this.contestSelectedDoor = doorNumber;
-        break;
-      }
-    }
-
-    this.playService.requestNew().subscribe((res: any) => {
+    this.resetDoors();
+    this.contestSelectedDoor = doorNumber;   
+    this.showToast = false;
+    this.playService.requestNew(this.contestSelectedDoor).subscribe((res: any) => {
       console.log(res);
-      this.hostOpenedDoorNumber = res.dN_host_will_open;
+      this.hostOpenedDoorNumber = res.dN_host_going_to_open;
       this.doorNumberWithCar = res.dN_with_Car;
-      this.arrangeDoors(res.dN_with_Car, res.dN_host_will_open);
+      this.arrangeDoors(this.doorNumberWithCar, this.hostOpenedDoorNumber);
+      this.visible = true;
     });
-
-    this.visible = true;
 
   }
 
@@ -58,6 +48,7 @@ export class playHallComponent {
     this.d1ImageSrc = '../../../../assets/images/Close.png';
     this.d2ImageSrc = '../../../../assets/images/Close.png';
     this.d3ImageSrc = '../../../../assets/images/Close.png';
+    this.showToast = false;
   }
 
   arrangeDoors(doorNumWithCar: number, doorNumHostWillOpen: number): void {
@@ -114,7 +105,46 @@ export class playHallComponent {
       console.log(res);
 
       this.visible = !this.visible;
+      this.showResult(res.dN_with_Car);
+      if(res.result == Result.Won){
+        this.msgResult = 'You Won';
+        this.resultColor = 'success';
+      }else{
+        this.msgResult = 'You Lost'
+        this.resultColor = 'danger';
+      } this.showToast = true;
     });
+  }
+
+  showResult(doorNumWithCar: number): void {
+    switch (doorNumWithCar) {
+      case 1: {
+        this.d1ImageForSet = '../../../../assets/images/Open-Car.png';
+        this.d2ImageForSet = '../../../../assets/images/Open-Goat.png';
+        this.d3ImageForSet = '../../../../assets/images/Open-Goat.png';
+        break;
+      }
+      case 2: {
+        this.d2ImageForSet = '../../../../assets/images/Open-Car.png';
+        this.d1ImageForSet = '../../../../assets/images/Open-Goat.png';
+        this.d3ImageForSet = '../../../../assets/images/Open-Goat.png';
+        break;
+      }
+      case 3: {
+        this.d3ImageForSet = '../../../../assets/images/Open-Car.png';
+        this.d1ImageForSet = '../../../../assets/images/Open-Goat.png';
+        this.d2ImageForSet = '../../../../assets/images/Open-Goat.png';
+        break;
+      }      
+    }
+
+    this.d1ImageSrc = this.d1ImageForSet;
+    this.d2ImageSrc = this.d2ImageForSet;
+    this.d3ImageSrc = this.d3ImageForSet;
+
+      setTimeout(() =>{
+        this.resetDoors();
+      },3000)
   }
 
 }

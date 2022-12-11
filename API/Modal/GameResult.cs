@@ -5,7 +5,7 @@
         public int RoundNumber { get; set; }
         public int DN_with_Car { get; set; }
         public int DN_Contest_Choice { get; set; }
-        public int DN_Result_shows { get; set; }
+        public int DN_after_shift_decision { get; set; }
         public bool IsSwitch { get; set; }
         public Result Result { get; set; }
 
