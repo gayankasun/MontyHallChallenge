@@ -15,15 +15,19 @@ namespace MontyHallChallenge.Controllers
     {
         [HttpGet]
         [Route("new")]
-        public Response RequestNewGame(int doorNumber, Guid? sessionID)
+        public Response RequestNewGame(int doorNumber, Guid CurrentSessionID)
         {
-            Guid sessionId = Guid.Empty;
-            if (sessionID == Guid.Empty)
+            Guid SessionId = Guid.Empty;
+            if (CurrentSessionID == Guid.Empty)
             {
-                sessionId = GenerateSession();
+                SessionId = GenerateSession();
+            }
+            else
+            {
+                SessionId = CurrentSessionID;
             }
            
-            return InitNewGame(doorNumber, sessionId);
+            return InitNewGame(doorNumber, SessionId);
 
         }
 
@@ -50,6 +54,7 @@ namespace MontyHallChallenge.Controllers
             result.DN_with_Car = request.DoorWithCar;
             result.IsSwitch = request.IsSwitched;
             result.SessionId = request.SessionId;
+            result.RoundNumber = request.RoundNumber;
 
             if (result.DN_with_Car == result.DN_after_shift_decision)
             {
@@ -61,7 +66,7 @@ namespace MontyHallChallenge.Controllers
             }
 
             //
-            CalculateResult(result);
+          result.GameSummary =  CalculateResult(result);
 
             return result;
         }
@@ -84,7 +89,7 @@ namespace MontyHallChallenge.Controllers
 
             return new Response
             {
-                RoundNumber = gameSummary.CurrentRound++,
+                RoundNumber = ++gameSummary.CurrentRound,
                 DN_with_Car = setCarIntoDoor,
                 DN_host_going_to_open = setDoorHostOpen,
                 SimulationType = SimulationType.single,
@@ -97,7 +102,7 @@ namespace MontyHallChallenge.Controllers
             GameSummary gameSummary = new GameSummary()
             {
                 SessionId = Guid.NewGuid(),
-                CurrentRound = 1,
+                CurrentRound = 0,
                 WonCount = 0,
                 LostCount = 0,
                 WinningPercentage = 0
@@ -110,25 +115,17 @@ namespace MontyHallChallenge.Controllers
             return gameSummary.SessionId;
         }
 
-        private void UpdateSession(GameSummary currentSummary)
+        private GameSummary  UpdateSession(GameSummary currentSummary)
         {
-
-          GameSummary gameSummary =  GetCurrentGameSummary(currentSummary.SessionId);
-            //GameSummary updatedResult = new GameSummary()
-            //{
-            //    CurrentRound = currentSummary.CurrentRound + 1,
-            //    SessionId =currentSummary.SessionId,
-
-
-            //}
-
-
-            //decimal winningPercentage = 0;
-
-            //winningPercentage = (currentSummary.Won / currentSummary.CurrentRound) * 100;
+           GameSummary gameSummary =  GetCurrentGameSummary(currentSummary.SessionId);
+           var updatedGameSummary =     JsonConvert.SerializeObject(currentSummary);
+           string filePath = string.Format(@"C:\RnD\MontyHallChallenge\API\SessionProfiles\{0}.json", gameSummary.SessionId);
+           System.IO.File.WriteAllText(filePath, updatedGameSummary);
+           
+            return currentSummary;
         }
 
-        private void CalculateResult(GameResult currentGameResult)
+        private GameSummary CalculateResult(GameResult currentGameResult)
         {
             GameSummary currentGameSummary = GetCurrentGameSummary(currentGameResult.SessionId);
 
@@ -140,10 +137,10 @@ namespace MontyHallChallenge.Controllers
             {
                 currentGameSummary.LostCount++;
             }
+            currentGameSummary.CurrentRound++;
+            currentGameSummary.WinningPercentage = Decimal.Round(((decimal)currentGameSummary.WonCount/currentGameSummary.CurrentRound) * 100, 2);
 
-            //currentGameSummary.WinningPercentage = 
-
-            //UpdateSession(currentGameSummary);
+           return UpdateSession(currentGameSummary);
 
         }
 

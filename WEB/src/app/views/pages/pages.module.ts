@@ -10,6 +10,7 @@ import { playHallComponent } from './playHall/playhall.component';
 
 import { ButtonModule, CardModule, FormModule, GridModule, ModalModule, ToastModule ,TableModule, UtilitiesModule } from '@coreui/angular';
 import { IconModule } from '@coreui/icons-angular';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 @NgModule({
   declarations: [
     LoginComponent,
@@ -29,7 +30,9 @@ import { IconModule } from '@coreui/icons-angular';
     ModalModule,
     ToastModule,
     TableModule,
-    UtilitiesModule
+    UtilitiesModule,
+    FormsModule,
+    ReactiveFormsModule
   ]
 })
 export class PagesModule {

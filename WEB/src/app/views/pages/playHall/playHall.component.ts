@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component  } from '@angular/core';
 import { ToasterComponent, ToasterPlacement } from '@coreui/angular';
-import { GameLog, GameRequest, Result, SimulationType } from 'src/app/modal/GameModal';
+import { GameLog, GameRequest, GameSummary, Result, SimulationType } from 'src/app/modal/GameModal';
 import { PalyService } from '../../../services/paly.service';
 import { Guid } from "guid-typescript";
 
@@ -26,6 +26,7 @@ export class playHallComponent {
   hostOpenedDoorNumber : number = 0;
   doorNumberWithCar: number = 0;
   gameRequest: GameRequest;
+  gameSummary: GameSummary;
   msgResult!: string;
   resultColor!: string;
   gameLogs : Array<GameLog> = [];
@@ -33,6 +34,11 @@ export class playHallComponent {
   roundNumber: number = 0;
 
   ngOnInit(): void {
+    this.gameSummary = new GameSummary();
+    this.gameSummary.CurrentRound = 0;
+    this.gameSummary.WonCount = 0;
+    this.gameSummary.LostCount = 0;
+    this.gameSummary.WinningPercentage = 0;
   }
 
   clickOnDoor(doorNumber: number): void {
@@ -126,6 +132,7 @@ export class playHallComponent {
       gameLog.Result= res.result;
 
       this.gameLogs.push(gameLog);
+      this.setGameSummary(res.gameSummary);
       
       this.visible = !this.visible;
       this.showResult(res.dN_with_Car);
@@ -168,6 +175,13 @@ export class playHallComponent {
       setTimeout(() =>{
         this.resetDoors();
       },3000)
+  }
+
+  setGameSummary(gameSummary: any){
+    this.gameSummary.CurrentRound = gameSummary.currentRound;
+    this.gameSummary.WonCount = gameSummary.wonCount;
+    this.gameSummary.LostCount = gameSummary.lostCount;
+    this.gameSummary.WinningPercentage = gameSummary.winningPercentage;
   }
 
 }

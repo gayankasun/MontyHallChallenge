@@ -62,16 +62,20 @@
           <c-card-body>
             <h5 cCardTitle>Results</h5>
             <c-row>
+              <c-col xs="3" sm="3"><label cLabel for="lblWon">Round(s)</label></c-col>
+              <c-col><input cFormControl id="txtWon" type="text" readonly  [(ngModel)]="this.gameSummary.CurrentRound"></c-col>
+            </c-row><br>
+            <c-row>
               <c-col xs="3" sm="3"><label cLabel for="lblWon">Won</label></c-col>
-              <c-col><input cFormControl id="txtWon" type="text" readonly></c-col>
+              <c-col><input cFormControl id="txtWon" type="text" readonly  [(ngModel)]="this.gameSummary.WonCount"></c-col>
             </c-row><br>
             <c-row>
               <c-col xs="3" sm="3"><label cLabel for="lblWon">Lost</label></c-col>
-              <c-col><input cFormControl id="txtWon" type="text" readonly></c-col>
+              <c-col><input cFormControl id="txtWon" type="text" readonly  [(ngModel)]="gameSummary.LostCount"></c-col>
             </c-row><br>
             <c-row>
               <c-col xs="3" sm="3"><label cLabel for="lblWinning">Winning %</label></c-col>
-              <c-col><input cFormControl id="txtWinning" type="text" readonly></c-col>
+              <c-col><input cFormControl id="txtWinning" type="text" readonly [(ngModel)]="gameSummary.WinningPercentage"></c-col>
             </c-row>
           </c-card-body>
         </c-card>

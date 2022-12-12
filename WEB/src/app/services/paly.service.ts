@@ -12,7 +12,7 @@ export class PalyService {
 	constructor (private http: HttpClient) { }
 
 	requestNew(contestSelectedDoor:number, sessionId?: any): Observable<any> {
-		return this.http.get(`${ environment.apiUrl }game/new?doorNumber=${ contestSelectedDoor }` + `&sessionID=${ sessionId }`);
+		return this.http.get(`${ environment.apiUrl }game/new?doorNumber=${ contestSelectedDoor }` + `&CurrentSessionID=${ sessionId }`);
 	}
 
 	getResult( request: GameRequest ): Observable<any> {

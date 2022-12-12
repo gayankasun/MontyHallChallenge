@@ -1,4 +1,6 @@
-﻿namespace MontyHallChallengeAPI.Modal
+﻿using API.Modal;
+
+namespace MontyHallChallengeAPI.Modal
 {
     public class GameResult
     {
@@ -9,6 +11,8 @@
         public int DN_after_shift_decision { get; set; }
         public bool IsSwitch { get; set; }
         public Result Result { get; set; }
+
+        public GameSummary GameSummary { get; set; }
 
     }
 
