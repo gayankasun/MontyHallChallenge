@@ -40,7 +40,7 @@ export class GameLog {
 
 export class GameSummary {
     SessionId :any;
-    CurrentRound! : number;
+    Rounds! : number;
     WonCount! : number;
     LostCount! : number;
     WinningPercentage! : number;

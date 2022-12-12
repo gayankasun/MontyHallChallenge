@@ -34,7 +34,7 @@ namespace MontyHallChallenge.Controllers
 
         [HttpPost]
         [Route("getResult")]
-        public GameResult Simulator(GameRequest request)
+        public GameResult GetGameResult(GameRequest request)
         {
             GameResult result = new GameResult();
             List<int> doorList = new List<int>() { 1, 2, 3 };
@@ -71,6 +71,16 @@ namespace MontyHallChallenge.Controllers
             return result;
         }
 
+        //[HttpGet]
+        //[Route("autoPlay")]
+        //public Response AutoPlayMode(int numOfRounds)
+        //{
+        //    for (int i = 0; i <= numOfRounds; i++)
+        //    {
+
+        //    }
+        //}
+
         private Response InitNewGame(int doorNumber, Guid sessionId)
         {
             List<int> doorList = new List<int>() { 1, 2, 3 };
@@ -89,7 +99,7 @@ namespace MontyHallChallenge.Controllers
 
             return new Response
             {
-                RoundNumber = ++gameSummary.CurrentRound,
+                RoundNumber = ++gameSummary.Rounds,
                 DN_with_Car = setCarIntoDoor,
                 DN_host_going_to_open = setDoorHostOpen,
                 SimulationType = SimulationType.single,
@@ -102,7 +112,7 @@ namespace MontyHallChallenge.Controllers
             GameSummary gameSummary = new GameSummary()
             {
                 SessionId = Guid.NewGuid(),
-                CurrentRound = 0,
+                Rounds = 0,
                 WonCount = 0,
                 LostCount = 0,
                 WinningPercentage = 0
@@ -137,8 +147,8 @@ namespace MontyHallChallenge.Controllers
             {
                 currentGameSummary.LostCount++;
             }
-            currentGameSummary.CurrentRound++;
-            currentGameSummary.WinningPercentage = Decimal.Round(((decimal)currentGameSummary.WonCount/currentGameSummary.CurrentRound) * 100, 2);
+            currentGameSummary.Rounds++;
+            currentGameSummary.WinningPercentage = Decimal.Round(((decimal)currentGameSummary.WonCount/currentGameSummary.Rounds) * 100, 2);
 
            return UpdateSession(currentGameSummary);
 

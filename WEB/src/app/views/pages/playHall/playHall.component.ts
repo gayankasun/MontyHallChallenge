@@ -35,7 +35,7 @@ export class playHallComponent {
 
   ngOnInit(): void {
     this.gameSummary = new GameSummary();
-    this.gameSummary.CurrentRound = 0;
+    this.gameSummary.Rounds = 0;
     this.gameSummary.WonCount = 0;
     this.gameSummary.LostCount = 0;
     this.gameSummary.WinningPercentage = 0;
@@ -178,7 +178,7 @@ export class playHallComponent {
   }
 
   setGameSummary(gameSummary: any){
-    this.gameSummary.CurrentRound = gameSummary.currentRound;
+    this.gameSummary.Rounds = gameSummary.rounds;
     this.gameSummary.WonCount = gameSummary.wonCount;
     this.gameSummary.LostCount = gameSummary.lostCount;
     this.gameSummary.WinningPercentage = gameSummary.winningPercentage;
