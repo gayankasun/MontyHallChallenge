@@ -32,13 +32,21 @@ export class playHallComponent {
   gameLogs : Array<GameLog> = [];
   sessionID: any;
   roundNumber: number = 0;
-
+  isSwitched:boolean = false;
+  numOfRoundsToRun: number = 0;
   ngOnInit(): void {
     this.gameSummary = new GameSummary();
     this.gameSummary.Rounds = 0;
     this.gameSummary.WonCount = 0;
     this.gameSummary.LostCount = 0;
     this.gameSummary.WinningPercentage = 0;
+  }
+
+  runGame(){
+    this.playService.autoPlay(this.numOfRoundsToRun,this.isSwitched).subscribe((res: any)=>{
+      console.log(res);
+      this.setGameSummary(res);
+    })
   }
 
   clickOnDoor(doorNumber: number): void {

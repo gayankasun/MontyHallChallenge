@@ -19,4 +19,8 @@ export class PalyService {
 		return this.http.post( `${ environment.apiUrl }game/getResult`, request );
 	}
 
+	autoPlay(numOfRounds:number, isSwitch: boolean): Observable<any> {
+		return this.http.get(`${ environment.apiUrl }game/autoPlay?numOfRounds=${ numOfRounds }` + `&isSwitch=${ isSwitch }`);
+	}
+
 }

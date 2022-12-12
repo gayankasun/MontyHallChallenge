@@ -2,7 +2,7 @@
 
 namespace API.Modal
 {
-    public class Response
+    public class Game
     {
         public int RoundNumber { get; set; }
         public SimulationType SimulationType { get; set; }

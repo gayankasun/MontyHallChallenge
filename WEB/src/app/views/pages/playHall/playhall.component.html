@@ -8,21 +8,21 @@
             <h5 cCardTitle>3 Door Simulation</h5>
             <c-row>
               <c-form-check>
-                <input cFormCheckInput type="radio" value="one" name="flexRadioDefault" />
+                <input cFormCheckInput type="radio" value="true" name="flexRadioDefault" [(ngModel)]="isSwitched"/>
                 <label cFormCheckLabel>Switch Strategy</label>
               </c-form-check>
               <c-form-check>
-                <input cFormCheckInput type="radio" value="two" name="flexRadioDefault" checked />
+                <input cFormCheckInput type="radio" value="false" name="flexRadioDefault" checked [(ngModel)]="isSwitched"/>
                 <label cFormCheckLabel>Keep Strategy</label>
               </c-form-check>
             </c-row><br>
             <c-row>
               <c-col xs="3" sm="3"><label cLabel for="lblRounds">Rounds</label></c-col>
-              <c-col><input cFormControl id="txtRound" type="text"></c-col>
+              <c-col><input cFormControl id="txtRound" type="text" [(ngModel)]="this.numOfRoundsToRun"></c-col>
 
             </c-row><br>
             <c-row>
-              <c-col><button cButton color="primary" size="sm">Play with Logs</button></c-col>
+              <c-col><button cButton color="primary" size="sm" (click)="runGame()">Play with Logs</button></c-col>
               <c-col><button cButton color="warning" size="sm">Auto Play (No logs)</button></c-col>
             </c-row>
           </c-card-body>

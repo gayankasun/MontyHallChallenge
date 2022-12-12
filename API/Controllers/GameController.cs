@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using MontyHallChallengeAPI.Modal;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
 
 
 namespace MontyHallChallenge.Controllers
@@ -15,7 +13,7 @@ namespace MontyHallChallenge.Controllers
     {
         [HttpGet]
         [Route("new")]
-        public Response RequestNewGame(int doorNumber, Guid CurrentSessionID)
+        public Game RequestNewGame(int doorNumber, Guid CurrentSessionID)
         {
             Guid SessionId = Guid.Empty;
             if (CurrentSessionID == Guid.Empty)
@@ -27,7 +25,7 @@ namespace MontyHallChallenge.Controllers
                 SessionId = CurrentSessionID;
             }
            
-            return InitNewGame(doorNumber, SessionId);
+            return Game(doorNumber, SessionId, SimulationType.single);
 
         }
 
@@ -35,6 +33,65 @@ namespace MontyHallChallenge.Controllers
         [HttpPost]
         [Route("getResult")]
         public GameResult GetGameResult(GameRequest request)
+        {
+            return RunGame(request);
+        }
+
+        [HttpGet]
+        [Route("autoPlay")]
+        public GameSummary AutoPlayMode(int numOfRounds, bool isSwitch)
+        {
+            Guid sessionId = GenerateSession();
+
+            for (int i = 1; i <= numOfRounds; i++)
+            {
+                int randomDoorPicked = Random.Shared.Next(1, 4);
+                Game game = Game(randomDoorPicked, sessionId, SimulationType.Auto);
+
+                GameRequest request = new GameRequest()
+                {
+                    RoundNumber = i,
+                    ContestSelectedDoor = randomDoorPicked,
+                    HostOpenedDoor = game.DN_host_going_to_open,
+                    DoorWithCar = game.DN_with_Car,
+                    SimulationType = (int)SimulationType.Auto,
+                    IsSwitched = isSwitch,
+                    SessionId = sessionId
+
+                };
+                RunGame(request);
+            }
+
+            return GetCurrentGameSummary(sessionId);
+        }
+
+        private Game Game(int doorNumber, Guid sessionId, SimulationType simulationType)
+        {
+            List<int> doorList = new List<int>() { 1, 2, 3 };
+            int setCarIntoDoor = Random.Shared.Next(1, 4);
+            doorList.RemoveAt(doorList.IndexOf(setCarIntoDoor));
+            if (doorNumber != setCarIntoDoor)
+            {
+                doorList.RemoveAt(doorList.IndexOf(doorNumber));
+            }
+
+
+            int indexDoorHostOpen = Random.Shared.Next(doorList.Count);
+            int setDoorHostOpen = doorList[indexDoorHostOpen];
+
+            GameSummary gameSummary = GetCurrentGameSummary(sessionId);
+
+            return new Game
+            {
+                RoundNumber = ++gameSummary.Rounds,
+                DN_with_Car = setCarIntoDoor,
+                DN_host_going_to_open = setDoorHostOpen,
+                SimulationType = simulationType,
+                SessionId = sessionId
+            };
+        }
+
+        private GameResult RunGame(GameRequest request)
         {
             GameResult result = new GameResult();
             List<int> doorList = new List<int>() { 1, 2, 3 };
@@ -66,45 +123,9 @@ namespace MontyHallChallenge.Controllers
             }
 
             //
-          result.GameSummary =  CalculateResult(result);
+            result.GameSummary = CalculateResult(result);
 
             return result;
-        }
-
-        //[HttpGet]
-        //[Route("autoPlay")]
-        //public Response AutoPlayMode(int numOfRounds)
-        //{
-        //    for (int i = 0; i <= numOfRounds; i++)
-        //    {
-
-        //    }
-        //}
-
-        private Response InitNewGame(int doorNumber, Guid sessionId)
-        {
-            List<int> doorList = new List<int>() { 1, 2, 3 };
-            int setCarIntoDoor = Random.Shared.Next(1, 4);
-            doorList.RemoveAt(doorList.IndexOf(setCarIntoDoor));
-            if (doorNumber != setCarIntoDoor)
-            {
-                doorList.RemoveAt(doorList.IndexOf(doorNumber));
-            }
-
-
-            int indexDoorHostOpen = Random.Shared.Next(doorList.Count);
-            int setDoorHostOpen = doorList[indexDoorHostOpen];
-
-            GameSummary gameSummary = GetCurrentGameSummary(sessionId);
-
-            return new Response
-            {
-                RoundNumber = ++gameSummary.Rounds,
-                DN_with_Car = setCarIntoDoor,
-                DN_host_going_to_open = setDoorHostOpen,
-                SimulationType = SimulationType.single,
-                SessionId = sessionId
-            };
         }
 
         private Guid GenerateSession()
