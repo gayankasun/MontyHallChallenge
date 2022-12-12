@@ -11,8 +11,8 @@ export class PalyService {
 
 	constructor (private http: HttpClient) { }
 
-	requestNew(contestSelectedDoor:number): Observable<any> {
-		return this.http.get(`${ environment.apiUrl }game/new?doorNumber=${ contestSelectedDoor }`);
+	requestNew(contestSelectedDoor:number, sessionId?: any): Observable<any> {
+		return this.http.get(`${ environment.apiUrl }game/new?doorNumber=${ contestSelectedDoor }` + `&sessionID=${ sessionId }`);
 	}
 
 	getResult( request: GameRequest ): Observable<any> {

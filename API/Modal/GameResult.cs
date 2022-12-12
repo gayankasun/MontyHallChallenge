@@ -3,6 +3,7 @@
     public class GameResult
     {
         public int RoundNumber { get; set; }
+        public Guid SessionId { get; set; }
         public int DN_with_Car { get; set; }
         public int DN_Contest_Choice { get; set; }
         public int DN_after_shift_decision { get; set; }

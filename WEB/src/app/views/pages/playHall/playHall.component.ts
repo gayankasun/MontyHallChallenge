@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ToasterComponent, ToasterPlacement } from '@coreui/angular';
 import { GameLog, GameRequest, Result, SimulationType } from 'src/app/modal/GameModal';
 import { PalyService } from '../../../services/paly.service';
+import { Guid } from "guid-typescript";
 
 @Component({
   selector: 'play-Hall',
@@ -28,21 +29,25 @@ export class playHallComponent {
   msgResult!: string;
   resultColor!: string;
   gameLogs : Array<GameLog> = [];
-
+  sessionID: any;
+  roundNumber: number = 0;
 
   ngOnInit(): void {
   }
 
   clickOnDoor(doorNumber: number): void {
     this.resetDoors();
-
-  
     this.contestSelectedDoor = doorNumber;   
     this.showToast = false;
-    this.playService.requestNew(this.contestSelectedDoor).subscribe((res: any) => {
+    let currentSessionId = Guid.createEmpty();
+
+    if(this.sessionID) {currentSessionId = this.sessionID};
+    this.playService.requestNew(this.contestSelectedDoor, currentSessionId).subscribe((res: any) => {
       console.log(res);
       this.hostOpenedDoorNumber = res.dN_host_going_to_open;
       this.doorNumberWithCar = res.dN_with_Car;
+      this.sessionID = res.sessionId;
+      this.roundNumber = res.roundNumber;
       this.arrangeDoors(this.doorNumberWithCar, this.hostOpenedDoorNumber);
       
       this.visible = true;
@@ -107,6 +112,8 @@ export class playHallComponent {
     this.gameRequest.DoorWithCar = this.doorNumberWithCar; 
     this.gameRequest.IsSwitched = isSwitch;
     this.gameRequest.SimulationType = SimulationType.single;
+    this.gameRequest.SessionId = this.sessionID;
+    this.gameRequest.RoundNumber = this.roundNumber;
 
     this.playService.getResult(this.gameRequest).subscribe((res: any) => {
       console.log(res);

@@ -1,9 +1,11 @@
 export class GameRequest {
+    RoundNumber!: number;
 	ContestSelectedDoor!: number;
 	HostOpenedDoor!: number;
 	DoorWithCar!: number;
 	SimulationType!: SimulationType;
 	IsSwitched!: boolean;
+    SessionId: any;
 }
 
 export enum Result {
