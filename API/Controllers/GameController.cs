@@ -15,6 +15,7 @@ namespace MontyHallChallenge.Controllers
         [Route("new")]
         public Game RequestNewGame(int doorNumber, Guid CurrentSessionID)
         {
+
             Guid SessionId = Guid.Empty;
             if (CurrentSessionID == Guid.Empty)
             {
@@ -24,11 +25,10 @@ namespace MontyHallChallenge.Controllers
             {
                 SessionId = CurrentSessionID;
             }
-           
+
             return Game(doorNumber, SessionId, SimulationType.single);
 
         }
-
 
         [HttpPost]
         [Route("getResult")]
@@ -64,6 +64,87 @@ namespace MontyHallChallenge.Controllers
 
             return GetCurrentGameSummary(sessionId);
         }
+
+        [HttpGet]
+        [Route("customPlay")]
+        public HttpResponseMessage CustomPlayMode(int numOfRounds, int numOfSets)
+        {
+            List<GamePercentageSummary> gameSummaryData = new List<GamePercentageSummary>();
+
+            for (int i = 1; i <= numOfSets; i++)
+            {
+                Guid sessionId = GenerateSession();
+                bool isSwitched = false;
+                for (int k = 0; k < 2; k++)
+                {
+                    var x = k;
+
+                    if (k == 1) { isSwitched = true; }
+
+                    for (int j = 1; j <= numOfRounds; j++)
+                    {
+                        int randomDoorPicked = Random.Shared.Next(1, 4);
+                        Game game = Game(randomDoorPicked, sessionId, SimulationType.Auto);
+
+                        GameRequest request = new GameRequest()
+                        {
+                            RoundNumber = i,
+                            ContestSelectedDoor = randomDoorPicked,
+                            HostOpenedDoor = game.DN_host_going_to_open,
+                            DoorWithCar = game.DN_with_Car,
+                            SimulationType = (int)SimulationType.Auto,
+                            IsSwitched = isSwitched,
+                            SessionId = sessionId
+
+                        };
+                        RunGame(request);
+                    }
+                    GameSummary gameSummary = GetCurrentGameSummary(sessionId);
+                    GamePercentageSummary meanSummary = new()
+                    {
+                        SessionId = gameSummary.SessionId,
+                        WinPercentage = gameSummary.WinningPercentage,
+                        LostPercentage = 100 - gameSummary.WinningPercentage,
+                        IsSwitched = isSwitched
+                    };
+
+                    gameSummaryData.Add(meanSummary);
+                }
+
+
+            }
+
+            decimal totalSwitchStrategyMean = 0;
+            decimal totalKeepStrategyMean = 0;
+            int totalRounds = numOfRounds * numOfSets;
+
+            foreach (var game in gameSummaryData)
+            {
+                if (game.IsSwitched)
+                {
+                    totalSwitchStrategyMean = totalSwitchStrategyMean + game.WinPercentage;
+                }
+                else
+                {
+                    totalKeepStrategyMean = totalKeepStrategyMean + game.LostPercentage;
+                }
+            }
+            GameMeanStrategy gameMeanStrategy = new()
+            {
+                TotalRounds = totalRounds,
+                SwitchStrategyMean = Decimal.Round(((decimal)totalSwitchStrategyMean / totalRounds) * 100, 2),
+                KeepStrategyMean = Decimal.Round(((decimal)totalKeepStrategyMean / totalRounds) * 100, 2),
+
+
+            };
+
+            //return new System.Net.HttpStatusCode)
+            //{
+            //    gameSummaryData= gameSummaryData,
+            //    gameMeanStrategy = gameMeanStrategy
+            //};
+            return null;
+        } 
 
         private Game Game(int doorNumber, Guid sessionId, SimulationType simulationType)
         {
