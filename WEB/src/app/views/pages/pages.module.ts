@@ -11,6 +11,7 @@ import { playHallComponent } from './playHall/playhall.component';
 import { ButtonModule, CardModule, FormModule, GridModule, ModalModule, ToastModule ,TableModule, UtilitiesModule } from '@coreui/angular';
 import { IconModule } from '@coreui/icons-angular';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ChartjsModule } from '@coreui/angular-chartjs';
 @NgModule({
   declarations: [
     LoginComponent,
@@ -32,7 +33,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     TableModule,
     UtilitiesModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    ChartjsModule,
   ]
 })
 export class PagesModule {

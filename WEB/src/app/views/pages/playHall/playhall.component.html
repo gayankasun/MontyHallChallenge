@@ -17,11 +17,15 @@
                   [(ngModel)]="isSwitched" />
                 <label cFormCheckLabel>Keep Strategy</label>
               </c-form-check>
-            </c-row><br>
+            </c-row>
             <c-row>
-              <c-col xs="3" sm="3"><label cLabel for="lblRounds">Rounds</label></c-col>
-              <c-col><input cFormControl id="txtRound" type="text" [(ngModel)]="this.numOfRoundsToRun"></c-col>
-
+              <c-input-group class="mb-3">
+                <span cInputGroupText>
+                  Rounds
+                </span>
+                <input autoComplete="name" cFormControl placeholder="Username" id="txRound" type="text"
+                  [(ngModel)]="this.numOfRoundsToRun" />
+              </c-input-group>
             </c-row><br>
             <c-row>
               <c-col><button cButton color="primary" size="sm" (click)="runGame()">Play</button></c-col>
@@ -37,12 +41,22 @@
           </c-card-header>
           <c-card-body>
             <c-row>
-              <c-col xs="3" sm="3"><label cLabel for="lblCustomRounds">Rounds</label></c-col>
-              <c-col><input cFormControl id="txtCustomRounds" type="text"></c-col>
-            </c-row><br>
+             <c-input-group class="mb-3">
+                <span cInputGroupText>
+                  Rounds
+                </span>
+                <input autoComplete="name" cFormControl placeholder="Username" id="txRound" type="text"
+                  [(ngModel)]="this.numOfRoundsToRun" />
+              </c-input-group>
+            </c-row>
             <c-row>
-              <c-col xs="3" sm="3"><label cLabel for="lblCustomSets">Sets</label></c-col>
-              <c-col><input cFormControl id="txtCustomSets" type="text"></c-col>
+              <c-input-group class="mb-3">
+                <span cInputGroupText>
+                  Sets
+                </span>
+                <input autoComplete="name" cFormControl placeholder="Username" id="txRound" type="text"
+                  [(ngModel)]="this.numOfRoundsToRun" />
+              </c-input-group>
             </c-row>
             <c-col><button cButton color="primary" size="sm" (click)="runGame()">Play</button></c-col>
 
@@ -68,26 +82,44 @@
           </c-card-header>
           <c-card-body>
             <c-row>
-              <c-col xs="3" sm="3"><label cLabel for="lblWon">Round(s)</label></c-col>
-              <c-col><input cFormControl id="txtWon" type="text" readonly [(ngModel)]="this.gameSummary.Rounds"></c-col>
-            </c-row><br>
+              <c-input-group class="mb-3">
+                <span cInputGroupText>
+                  Round(s)
+                </span>
+                <input autoComplete="name" cFormControl placeholder="Username" id="txtWon" type="text" readonly
+                  [(ngModel)]="this.gameSummary.Rounds" />
+              </c-input-group>
+            </c-row>
             <c-row>
-              <c-col xs="3" sm="3"><label cLabel for="lblWon">Won</label></c-col>
-              <c-col><input cFormControl id="txtWon" type="text" readonly [(ngModel)]="this.gameSummary.WonCount">
-              </c-col>
-            </c-row><br>
+              <c-input-group class="mb-3">
+                <span cInputGroupText>
+                  Won
+                </span>
+                <input autoComplete="name" cFormControl placeholder="Username" id="txRound" type="text" readonly
+                  [(ngModel)]="this.gameSummary.WonCount" />
+              </c-input-group>
+            </c-row>
             <c-row>
-              <c-col xs="3" sm="3"><label cLabel for="lblWon">Lost</label></c-col>
-              <c-col><input cFormControl id="txtWon" type="text" readonly [(ngModel)]="gameSummary.LostCount"></c-col>
-            </c-row><br>
+              <c-input-group class="mb-3">
+                <span cInputGroupText>
+                  Lost
+                </span>
+                <input autoComplete="name" cFormControl placeholder="Username" id="txRound" type="text" readonly
+                  [(ngModel)]="this.gameSummary.LostCount" />
+              </c-input-group>
+            </c-row>
             <c-row>
-              <c-col xs="3" sm="3"><label cLabel for="lblWinning">Winning %</label></c-col>
-              <c-col><input cFormControl id="txtWinning" type="text" readonly
-                  [(ngModel)]="gameSummary.WinningPercentage"></c-col>
+              <c-input-group class="mb-3">
+                <span cInputGroupText>
+                  Winning %
+                </span>
+                <input autoComplete="name" cFormControl placeholder="Username" id="txRound" type="text" readonly
+                  [(ngModel)]="this.gameSummary.WinningPercentage" />
+              </c-input-group>
             </c-row>
             <c-row>
               <c-col>
-                <button cButton color="danger" size="sm" (click)="resetDoors()">Reset</button>
+                <button cButton class="mb-3"  color="danger" size="sm" (click)="resetDoors()">Reset</button>
               </c-col>
             </c-row>
 
@@ -127,10 +159,11 @@
       </c-col>
       <c-col xs="6">
         <c-card class="mb-4">
-          <c-card-header ngPreserveWhitespaces>
-            <strong>Charts</strong>
+          <c-card-header>
+            Line Chart
           </c-card-header>
           <c-card-body>
+            <c-chart type="line" [data]="chartLineData"></c-chart>
           </c-card-body>
         </c-card>
       </c-col>
