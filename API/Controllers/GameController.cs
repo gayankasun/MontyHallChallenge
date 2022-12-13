@@ -1,8 +1,10 @@
-﻿using API.Modal;
+﻿using API.Handlers;
+using API.Modal;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using MontyHallChallengeAPI.Modal;
 using Newtonsoft.Json;
-
+using System.Net;
 
 namespace MontyHallChallenge.Controllers
 {
@@ -13,137 +15,206 @@ namespace MontyHallChallenge.Controllers
     {
         [HttpGet]
         [Route("new")]
-        public Game RequestNewGame(int doorNumber, Guid CurrentSessionID)
+        public APIJsonMessage RequestNewGame(int doorNumber, Guid CurrentSessionID)
         {
+            APIJsonMessage rtnValue = new APIJsonMessage();
 
-            Guid SessionId = Guid.Empty;
-            if (CurrentSessionID == Guid.Empty)
+            try
             {
-                SessionId = GenerateSession();
+                Guid SessionId = Guid.Empty;
+
+                if (CurrentSessionID == Guid.Empty)
+                {
+                    SessionId = GenerateSession();
+                }
+                else
+                {
+                    SessionId = CurrentSessionID;
+                }
+
+                Game game = Game(doorNumber, SessionId, SimulationType.single);
+
+                rtnValue.MessageBody.Content = new
+                {
+                    game
+                };
             }
-            else
+            catch (Exception ex)
             {
-                SessionId = CurrentSessionID;
+                rtnValue.StatusCode = HttpStatusCode.InternalServerError;
+
+                rtnValue.MessageBody.IsSuccessful = false;
+                rtnValue.MessageBody.Description = ex.Message;
             }
 
-            return Game(doorNumber, SessionId, SimulationType.single);
+            return rtnValue;
 
-        }
+         }
 
         [HttpPost]
         [Route("getResult")]
-        public GameResult GetGameResult(GameRequest request)
+        public APIJsonMessage GetGameResult(GameRequest request)
         {
-            return RunGame(request);
+            APIJsonMessage rtnValue = new APIJsonMessage();
+            try
+            {
+                GameResult gameResult = RunGame(request);
+
+                rtnValue.MessageBody.Content = new
+                {
+                    gameResult
+                };
+            }
+            catch (Exception ex)
+            {
+                rtnValue.StatusCode = HttpStatusCode.InternalServerError;
+
+                rtnValue.MessageBody.IsSuccessful = false;
+                rtnValue.MessageBody.Description = ex.Message;
+            }
+
+            return rtnValue;
         }
 
         [HttpGet]
         [Route("autoPlay")]
-        public GameSummary AutoPlayMode(int numOfRounds, bool isSwitch)
+        public APIJsonMessage AutoPlayMode(int numOfRounds, bool isSwitch)
         {
-            Guid sessionId = GenerateSession();
+            APIJsonMessage rtnValue = new APIJsonMessage();
 
-            for (int i = 1; i <= numOfRounds; i++)
+            try
             {
-                int randomDoorPicked = Random.Shared.Next(1, 4);
-                Game game = Game(randomDoorPicked, sessionId, SimulationType.Auto);
+                Guid sessionId = GenerateSession();
 
-                GameRequest request = new GameRequest()
+                for (int i = 1; i <= numOfRounds; i++)
                 {
-                    RoundNumber = i,
-                    ContestSelectedDoor = randomDoorPicked,
-                    HostOpenedDoor = game.DN_host_going_to_open,
-                    DoorWithCar = game.DN_with_Car,
-                    SimulationType = (int)SimulationType.Auto,
-                    IsSwitched = isSwitch,
-                    SessionId = sessionId
+                    int randomDoorPicked = Random.Shared.Next(1, 4);
+                    Game game = Game(randomDoorPicked, sessionId, SimulationType.Auto);
 
+                    GameRequest request = new GameRequest()
+                    {
+                        RoundNumber = i,
+                        ContestSelectedDoor = randomDoorPicked,
+                        HostOpenedDoor = game.DN_host_going_to_open,
+                        DoorWithCar = game.DN_with_Car,
+                        SimulationType = (int)SimulationType.Auto,
+                        IsSwitched = isSwitch,
+                        SessionId = sessionId
+
+                    };
+                    RunGame(request);
+                }
+
+                GameSummary gameSummary = GetCurrentGameSummary(sessionId);
+
+                rtnValue.MessageBody.Content = new
+                {
+                    gameSummary
                 };
-                RunGame(request);
+            }
+            catch (Exception ex)
+            {
+                rtnValue.StatusCode = HttpStatusCode.InternalServerError;
+
+                rtnValue.MessageBody.IsSuccessful = false;
+                rtnValue.MessageBody.Description = ex.Message;
             }
 
-            return GetCurrentGameSummary(sessionId);
+            return rtnValue;
         }
 
         [HttpGet]
         [Route("customPlay")]
-        public HttpResponseMessage CustomPlayMode(int numOfRounds, int numOfSets)
+        public APIJsonMessage CustomPlayMode(int numOfRounds, int numOfSets)
         {
-            List<GamePercentageSummary> gameSummaryData = new List<GamePercentageSummary>();
+            APIJsonMessage rtnValue = new APIJsonMessage();
 
-            for (int i = 1; i <= numOfSets; i++)
+            try
             {
-                Guid sessionId = GenerateSession();
-                bool isSwitched = false;
-                for (int k = 0; k < 2; k++)
+                List<GamePercentageSummary> gameSummaryData = new List<GamePercentageSummary>();
+
+                for (int i = 1; i <= numOfSets; i++)
                 {
-                    var x = k;
-
-                    if (k == 1) { isSwitched = true; }
-
-                    for (int j = 1; j <= numOfRounds; j++)
+                    Guid sessionId = GenerateSession();
+                    bool isSwitched = false;
+                    for (int k = 0; k < 2; k++)
                     {
-                        int randomDoorPicked = Random.Shared.Next(1, 4);
-                        Game game = Game(randomDoorPicked, sessionId, SimulationType.Auto);
+                        var x = k;
 
-                        GameRequest request = new GameRequest()
+                        if (k == 1) { isSwitched = true; }
+
+                        for (int j = 1; j <= numOfRounds; j++)
                         {
-                            RoundNumber = i,
-                            ContestSelectedDoor = randomDoorPicked,
-                            HostOpenedDoor = game.DN_host_going_to_open,
-                            DoorWithCar = game.DN_with_Car,
-                            SimulationType = (int)SimulationType.Auto,
-                            IsSwitched = isSwitched,
-                            SessionId = sessionId
+                            int randomDoorPicked = Random.Shared.Next(1, 4);
+                            Game game = Game(randomDoorPicked, sessionId, SimulationType.Auto);
 
+                            GameRequest request = new GameRequest()
+                            {
+                                RoundNumber = i,
+                                ContestSelectedDoor = randomDoorPicked,
+                                HostOpenedDoor = game.DN_host_going_to_open,
+                                DoorWithCar = game.DN_with_Car,
+                                SimulationType = (int)SimulationType.Auto,
+                                IsSwitched = isSwitched,
+                                SessionId = sessionId
+
+                            };
+                            RunGame(request);
+                        }
+                        GameSummary gameSummary = GetCurrentGameSummary(sessionId);
+                        GamePercentageSummary meanSummary = new()
+                        {
+                            SessionId = gameSummary.SessionId,
+                            WinPercentage = gameSummary.WinningPercentage,
+                            LostPercentage = 100 - gameSummary.WinningPercentage,
+                            IsSwitched = isSwitched
                         };
-                        RunGame(request);
+
+                        gameSummaryData.Add(meanSummary);
                     }
-                    GameSummary gameSummary = GetCurrentGameSummary(sessionId);
-                    GamePercentageSummary meanSummary = new()
+
+
+                }
+
+                decimal totalSwitchStrategyMean = 0;
+                decimal totalKeepStrategyMean = 0;
+                int totalRounds = numOfRounds * numOfSets;
+
+                foreach (var game in gameSummaryData)
+                {
+                    if (game.IsSwitched)
                     {
-                        SessionId = gameSummary.SessionId,
-                        WinPercentage = gameSummary.WinningPercentage,
-                        LostPercentage = 100 - gameSummary.WinningPercentage,
-                        IsSwitched = isSwitched
-                    };
-
-                    gameSummaryData.Add(meanSummary);
+                        totalSwitchStrategyMean = totalSwitchStrategyMean + game.WinPercentage;
+                    }
+                    else
+                    {
+                        totalKeepStrategyMean = totalKeepStrategyMean + game.LostPercentage;
+                    }
                 }
+                GameMeanStrategy gameMeanStrategy = new()
+                {
+                    TotalRounds = totalRounds,
+                    SwitchStrategyMean = Decimal.Round(((decimal)totalSwitchStrategyMean / totalRounds) * 100, 2),
+                    KeepStrategyMean = Decimal.Round(((decimal)totalKeepStrategyMean / totalRounds) * 100, 2),
 
 
+                };
+
+                rtnValue.MessageBody.Content = new
+                {
+                    gameSummaryData = gameSummaryData,
+                    gameMeanStrategy = gameMeanStrategy
+                };
+            }
+            catch (Exception ex)
+            {
+                rtnValue.StatusCode = HttpStatusCode.InternalServerError;
+
+                rtnValue.MessageBody.IsSuccessful = false;
+                rtnValue.MessageBody.Description = ex.Message;
             }
 
-            decimal totalSwitchStrategyMean = 0;
-            decimal totalKeepStrategyMean = 0;
-            int totalRounds = numOfRounds * numOfSets;
-
-            foreach (var game in gameSummaryData)
-            {
-                if (game.IsSwitched)
-                {
-                    totalSwitchStrategyMean = totalSwitchStrategyMean + game.WinPercentage;
-                }
-                else
-                {
-                    totalKeepStrategyMean = totalKeepStrategyMean + game.LostPercentage;
-                }
-            }
-            GameMeanStrategy gameMeanStrategy = new()
-            {
-                TotalRounds = totalRounds,
-                SwitchStrategyMean = Decimal.Round(((decimal)totalSwitchStrategyMean / totalRounds) * 100, 2),
-                KeepStrategyMean = Decimal.Round(((decimal)totalKeepStrategyMean / totalRounds) * 100, 2),
-
-
-            };
-
-            //return new System.Net.HttpStatusCode)
-            //{
-            //    gameSummaryData= gameSummaryData,
-            //    gameMeanStrategy = gameMeanStrategy
-            //};
-            return null;
+            return rtnValue;
         } 
 
         private Game Game(int doorNumber, Guid sessionId, SimulationType simulationType)

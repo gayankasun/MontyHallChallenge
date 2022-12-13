@@ -44,8 +44,8 @@ export class playHallComponent {
 
   runGame(){
     this.playService.autoPlay(this.numOfRoundsToRun,this.isSwitched).subscribe((res: any)=>{
-      console.log(res);
-      this.setGameSummary(res);
+      console.log(res.messageBody.content.gameSummary);
+      this.setGameSummary(res.messageBody.content.gameSummary);
     })
   }
 
@@ -57,11 +57,11 @@ export class playHallComponent {
 
     if(this.sessionID) {currentSessionId = this.sessionID};
     this.playService.requestNew(this.contestSelectedDoor, currentSessionId).subscribe((res: any) => {
-      console.log(res);
-      this.hostOpenedDoorNumber = res.dN_host_going_to_open;
-      this.doorNumberWithCar = res.dN_with_Car;
-      this.sessionID = res.sessionId;
-      this.roundNumber = res.roundNumber;
+      console.log(res.messageBody.content.game);
+      this.hostOpenedDoorNumber = res.messageBody.content.game.dN_host_going_to_open;
+      this.doorNumberWithCar = res.messageBody.content.game.dN_with_Car;
+      this.sessionID = res.messageBody.content.game.sessionId;
+      this.roundNumber = res.messageBody.content.game.roundNumber;
       this.arrangeDoors(this.doorNumberWithCar, this.hostOpenedDoorNumber);
       
       this.visible = true;
@@ -130,21 +130,20 @@ export class playHallComponent {
     this.gameRequest.RoundNumber = this.roundNumber;
 
     this.playService.getResult(this.gameRequest).subscribe((res: any) => {
-      console.log(res);
+      console.log(res.messageBody.content.gameResult);
       let gameLog =  new GameLog();
-      gameLog.Round = res.roundNumber;
-      gameLog.Round= res.roundNumber;
-      gameLog.DoorWithCar= res.dN_with_Car;
-      gameLog.ContestSelectedDoor= res.dN_Contest_Choice;
-      gameLog.IsSwitched= res.isSwitch;
-      gameLog.Result= res.result;
+      gameLog.Round= res.messageBody.content.gameResult.roundNumber;
+      gameLog.DoorWithCar= res.messageBody.content.gameResult.dN_with_Car;
+      gameLog.ContestSelectedDoor= res.messageBody.content.gameResult.dN_Contest_Choice;
+      gameLog.IsSwitched= res.messageBody.content.gameResult.isSwitch;
+      gameLog.Result= res.messageBody.content.gameResult.result;
 
       this.gameLogs.push(gameLog);
-      this.setGameSummary(res.gameSummary);
+      this.setGameSummary(res.messageBody.content.gameResult.gameSummary);
       
       this.visible = !this.visible;
-      this.showResult(res.dN_with_Car);
-      if(res.result == Result.Won){
+      this.showResult(res.messageBody.content.gameResult.dN_with_Car);
+      if(res.messageBody.content.gameResult.result == Result.Won){
         this.msgResult = 'You Won';
         this.resultColor = 'success';
       }else{
