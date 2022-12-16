@@ -1,18 +1,25 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { GameRequest } from '../modal/GameModal';
 
 @Injectable( {
 	providedIn: 'root'
 } )
 export class PalyService {
-
+	public showSpinner: BehaviorSubject<boolean> = new BehaviorSubject(false);
 	constructor (private http: HttpClient) { }
 
 	requestNew(contestSelectedDoor:number, sessionId?: any): Observable<any> {
-		return this.http.get(`${ environment.apiUrl }game/new?doorNumber=${ contestSelectedDoor }` + `&CurrentSessionID=${ sessionId }`);
+		this.showSpinner.next(true);
+		return this.http.get(`${ environment.apiUrl }game/new?doorNumber=${ contestSelectedDoor }` + `&CurrentSessionID=${ sessionId }`)
+		.pipe(
+			tap(
+			  (response) => this.showSpinner.next(false),
+			  (error: any) => this.showSpinner.next(false)
+			)
+		)
 	}
 
 	getResult( request: GameRequest ): Observable<any> {

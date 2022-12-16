@@ -3,6 +3,7 @@ import { ToasterComponent, ToasterPlacement } from '@coreui/angular';
 import { GameLog, GameRequest, GameSummary, Result, SimulationType } from 'src/app/modal/GameModal';
 import { PalyService } from '../../../services/paly.service';
 import { Guid } from "guid-typescript";
+import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 
 @Component({
   selector: 'play-Hall',
@@ -11,7 +12,7 @@ import { Guid } from "guid-typescript";
 })
 export class playHallComponent {
   constructor(private playService: PalyService) {}
-
+  loadingSub: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   d1ImageSrc: string = '../../../../assets/images/Close.png';
   d2ImageSrc: string = '../../../../assets/images/Close.png';
   d3ImageSrc: string = '../../../../assets/images/Close.png';
@@ -20,6 +21,7 @@ export class playHallComponent {
   d2ImageForSet: string = "";
   d3ImageForSet: string = "";
 
+  loading: boolean = false;
   visible = false;
   showToast: boolean = false;
   contestSelectedDoor: number = 0;
@@ -66,7 +68,8 @@ export class playHallComponent {
   }
 
 
-  runGame(){
+  runGame(){ 
+    this.loading = true;
     this.playService.autoPlay(this.numOfRoundsToRun,this.isSwitched).subscribe((res: any)=>{
       console.log(res.messageBody.content.gameSummary);
       this.setGameSummary(res.messageBody.content.gameSummary);
@@ -87,19 +90,18 @@ export class playHallComponent {
           }
         ]
       };
-
+      this.loading = false;
     })
   }
 
   customPlayMode(){
+    this.loading = true;
     this.playService.customPlay(this.numOfRoundsToCusRun,this.numOfSetsToCusRun).subscribe((res: any)=>{
       console.log(res.messageBody.content);
-      // this.setGameSummary(res.messageBody.content.gameSummary);
-
       let dataArray = res.messageBody.content;
-
       this.loadChartData(dataArray.numOfRoundsList,dataArray.listWinPercentageIfSwitch ,
-           dataArray.listWinPercentageIfKeep,dataArray.noOfSetsCount)
+           dataArray.listWinPercentageIfKeep,dataArray.noOfSetsCount);
+    this.loading = false;
       
     })
   }
@@ -129,6 +131,7 @@ export class playHallComponent {
     let currentSessionId = Guid.createEmpty();
 
     if(this.sessionID) {currentSessionId = this.sessionID};
+    this.loading = true;
     this.playService.requestNew(this.contestSelectedDoor, currentSessionId).subscribe((res: any) => {
       console.log(res.messageBody.content.game);
       this.hostOpenedDoorNumber = res.messageBody.content.game.dN_host_going_to_open;
@@ -136,7 +139,8 @@ export class playHallComponent {
       this.sessionID = res.messageBody.content.game.sessionId;
       this.roundNumber = res.messageBody.content.game.roundNumber;
       this.arrangeDoors(this.doorNumberWithCar, this.hostOpenedDoorNumber);
-      
+      console.log(this.playService.showSpinner.value);
+      this.loading = false
       this.visible = true;
 
     });
@@ -190,8 +194,6 @@ export class playHallComponent {
   }
 
   switch(isSwitch: boolean){
-    console.log(isSwitch);
-
    this.gameRequest = new GameRequest();
 
     this.gameRequest.ContestSelectedDoor = this.contestSelectedDoor;
@@ -202,6 +204,7 @@ export class playHallComponent {
     this.gameRequest.SessionId = this.sessionID;
     this.gameRequest.RoundNumber = this.roundNumber;
 
+    this.loading = true;
     this.playService.getResult(this.gameRequest).subscribe((res: any) => {
       console.log(res.messageBody.content.gameResult);
       let gameLog =  new GameLog();
@@ -223,6 +226,7 @@ export class playHallComponent {
         this.msgResult = 'You Lost'
         this.resultColor = 'danger';
       } this.showToast = true;
+      this.loading = false;
     });
   }
 

@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   apiUrl: 'https://localhost:7266/',
-  // apiUrl: 'https://montyhall-test.azurewebsites.net/'
+  // apiUrl: 'https://montyhall-test.azurewebsites.net/api'
 };
 
 /*

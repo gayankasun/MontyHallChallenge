@@ -1,5 +1,9 @@
 <div class="bg-light min-vh-100 d-flex flex-row align-items-center">
   <c-container>
+    <div class="fade show" style="text-align: center; height: 5vh"  *ngIf="loading">
+      <i class="spinner-grow spinner-grow-sm"></i>
+      <span class="m-1">Working on it...</span>
+    </div>
     <c-row>
       <c-col xs="6">
         <c-card class="mb-4">
@@ -28,7 +32,7 @@
               </c-input-group>
             </c-row><br>
             <c-row>
-              <c-col><button cButton color="primary" size="sm" (click)="runGame()">Play</button></c-col>
+              <c-col><button cButton color="primary" size="sm" (click)="runGame()" [disabled]="loading" >Play</button></c-col>
             </c-row>
 
           </c-card-body>
@@ -58,7 +62,7 @@
                   [(ngModel)]="this.numOfSetsToCusRun" />
               </c-input-group>
             </c-row>
-            <c-col><button cButton color="primary" size="sm" (click)="customPlayMode()">Play</button></c-col>
+            <c-col><button cButton color="primary" size="sm" (click)="customPlayMode()" [disabled]="loading" >Play</button></c-col>
 
           </c-card-body>
         </c-card>
@@ -119,7 +123,7 @@
             </c-row>
             <c-row>
               <c-col>
-                <button cButton class="mb-3"  color="danger" size="sm" (click)="resetDoors()">Reset</button>
+                <button cButton class="mb-3"  color="danger" size="sm" (click)="resetDoors()" [disabled]="loading" >Reset</button>
               </c-col>
             </c-row>
 
@@ -176,10 +180,10 @@
       </c-modal-header>
       <c-modal-body>You have selected door #{{contestSelectedDoor}}. Do you want to switch?</c-modal-body>
       <c-modal-footer>
-        <button (click)="switch(true)" cButton color="primary">
+        <button (click)="switch(true)" cButton color="primary" [disabled]="loading">
           Yes
         </button>
-        <button (click)="switch(false)" cButton color="primary">
+        <button (click)="switch(false)" cButton color="primary" [disabled]="loading" >
           No
         </button>
       </c-modal-footer>
