@@ -13,14 +13,14 @@ const routes: Routes = [
     path: '',
     component: playHallComponent,
     data: {
-      title: 'Play'
+      title: 'Play' 
     },
     children: [
       {
         path: 'pages',
         loadChildren: () =>
           import('./views/pages/pages.module').then((m) => m.PagesModule)
-      },
+      },  
     ]
   },
   {
