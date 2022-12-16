@@ -16,6 +16,11 @@ export class ChartsComponent {
         label: 'GitHub Commits',
         backgroundColor: '#f87979',
         data: [40, 20, 12, 39, 17, 42, 79]
+      },
+      {
+        label: 'GitHub Commits',
+        backgroundColor: '#f87979',
+        data: [40, 20, 12, 39, 17, 42, 79]
       }
     ]
   };

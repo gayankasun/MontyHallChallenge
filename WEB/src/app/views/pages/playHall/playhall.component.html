@@ -46,7 +46,7 @@
                   Rounds
                 </span>
                 <input autoComplete="name" cFormControl placeholder="Username" id="txRound" type="text"
-                  [(ngModel)]="this.numOfRoundsToRun" />
+                  [(ngModel)]="this.numOfRoundsToCusRun" />
               </c-input-group>
             </c-row>
             <c-row>
@@ -55,10 +55,10 @@
                   Sets
                 </span>
                 <input autoComplete="name" cFormControl placeholder="Username" id="txRound" type="text"
-                  [(ngModel)]="this.numOfRoundsToRun" />
+                  [(ngModel)]="this.numOfSetsToCusRun" />
               </c-input-group>
             </c-row>
-            <c-col><button cButton color="primary" size="sm" (click)="runGame()">Play</button></c-col>
+            <c-col><button cButton color="primary" size="sm" (click)="customPlayMode()">Play</button></c-col>
 
           </c-card-body>
         </c-card>
@@ -163,7 +163,7 @@
             Line Chart
           </c-card-header>
           <c-card-body>
-            <c-chart type="line" [data]="chartLineData"></c-chart>
+            <c-chart type="bar" [data]="this.barChartData"></c-chart>
           </c-card-body>
         </c-card>
       </c-col>

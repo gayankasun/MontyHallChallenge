@@ -2,6 +2,7 @@
 using API.Modal;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Configuration;
 using MontyHallChallengeAPI.Modal;
 using Newtonsoft.Json;
 using System.Net;
@@ -11,16 +12,21 @@ namespace MontyHallChallenge.Controllers
 
     [ApiController]
     [Route("[controller]")]
-    public class GameController : Controller
+    public class GameController : ControllerBase
     {
+        private readonly IConfiguration _configuration;
+        public GameController(IConfiguration configuration)
+        {
+            this._configuration = configuration;
+        }
         [HttpGet]
         [Route("new")]
         public APIJsonMessage RequestNewGame(int doorNumber, Guid CurrentSessionID)
         {
             APIJsonMessage rtnValue = new APIJsonMessage();
-
             try
             {
+
                 Guid SessionId = Guid.Empty;
 
                 if (CurrentSessionID == Guid.Empty)
@@ -139,8 +145,6 @@ namespace MontyHallChallenge.Controllers
                     bool isSwitched = false;
                     for (int k = 0; k < 2; k++)
                     {
-                        var x = k;
-
                         if (k == 1) { isSwitched = true; }
 
                         for (int j = 1; j <= numOfRounds; j++)
@@ -176,34 +180,60 @@ namespace MontyHallChallenge.Controllers
 
                 }
 
-                decimal totalSwitchStrategyMean = 0;
-                decimal totalKeepStrategyMean = 0;
+                decimal totalWinSwitchStrategyMean = 0;
+                decimal totalWinKeepStrategyMean = 0;
                 int totalRounds = numOfRounds * numOfSets;
 
+                List<decimal> listWinPercentageIfSwitch = new List<decimal>();
+                List<decimal> listWinPercentageIfKeep = new List<decimal>();
+                List<int> listNumOfSets = new List<int>();
+                
                 foreach (var game in gameSummaryData)
                 {
                     if (game.IsSwitched)
                     {
-                        totalSwitchStrategyMean = totalSwitchStrategyMean + game.WinPercentage;
+                        listWinPercentageIfSwitch.Add(game.WinPercentage);
+                       // totalWinSwitchStrategyMean = totalWinSwitchStrategyMean + game.WinPercentage;
                     }
                     else
                     {
-                        totalKeepStrategyMean = totalKeepStrategyMean + game.LostPercentage;
+                        listWinPercentageIfKeep.Add(game.WinPercentage);
+                        //totalWinKeepStrategyMean = totalWinKeepStrategyMean + game.WinPercentage;
                     }
+
                 }
+
+                for (int i = 1; i <= numOfSets; i++)
+                {
+                    listNumOfSets.Add(i);
+                }
+
+                var a = totalWinSwitchStrategyMean;
+                var b = totalWinKeepStrategyMean;
+
+                var c = Decimal.Round(((decimal)totalWinSwitchStrategyMean / numOfRounds), 2);
+                var d = Decimal.Round(((decimal)totalWinKeepStrategyMean / numOfRounds), 2);
+
                 GameMeanStrategy gameMeanStrategy = new()
                 {
                     TotalRounds = totalRounds,
-                    SwitchStrategyMean = Decimal.Round(((decimal)totalSwitchStrategyMean / totalRounds) * 100, 2),
-                    KeepStrategyMean = Decimal.Round(((decimal)totalKeepStrategyMean / totalRounds) * 100, 2),
-
+                    SwitchStrategyMean = Decimal.Round(((decimal)totalWinSwitchStrategyMean / totalRounds) * 100, 2),
+                    KeepStrategyMean = Decimal.Round(((decimal)totalWinKeepStrategyMean / totalRounds) * 100, 2),
 
                 };
 
+
+
+
                 rtnValue.MessageBody.Content = new
                 {
-                    gameSummaryData = gameSummaryData,
-                    gameMeanStrategy = gameMeanStrategy
+                    //gameSummaryData = gameSummaryData,
+                    //gameMeanStrategy = gameMeanStrategy
+                    listWinPercentageIfSwitch = listWinPercentageIfSwitch,
+                    listWinPercentageIfKeep = listWinPercentageIfKeep,
+                    numOfRoundsList= listNumOfSets,
+                    noOfSetsCount = numOfSets
+
                 };
             }
             catch (Exception ex)
@@ -292,7 +322,8 @@ namespace MontyHallChallenge.Controllers
             };
 
             string json = JsonConvert.SerializeObject(gameSummary);
-            string filePath = string.Format(@"C:\RnD\MontyHallChallenge\API\SessionProfiles\{0}.json", gameSummary.SessionId);
+            var sessionProfilePath = _configuration.GetValue<string>("SessioProfile:filePath");
+            string filePath = string.Format(@"{0}\{1}.json", sessionProfilePath , gameSummary.SessionId);
             System.IO.File.WriteAllText(filePath, json);
 
             return gameSummary.SessionId;
@@ -302,7 +333,8 @@ namespace MontyHallChallenge.Controllers
         {
            GameSummary gameSummary =  GetCurrentGameSummary(currentSummary.SessionId);
            var updatedGameSummary =     JsonConvert.SerializeObject(currentSummary);
-           string filePath = string.Format(@"C:\RnD\MontyHallChallenge\API\SessionProfiles\{0}.json", gameSummary.SessionId);
+           var sessionProfilePath = _configuration.GetValue<string>("SessioProfile:filePath");
+           string filePath = string.Format(@"{0}\{1}.json", sessionProfilePath, gameSummary.SessionId);
            System.IO.File.WriteAllText(filePath, updatedGameSummary);
            
             return currentSummary;
@@ -329,7 +361,8 @@ namespace MontyHallChallenge.Controllers
 
         private GameSummary GetCurrentGameSummary(Guid sessionId)
         {
-            string filePath = string.Format(@"C:\RnD\MontyHallChallenge\API\SessionProfiles\{0}.json", sessionId);
+            var sessionProfilePath = _configuration.GetValue<string>("SessioProfile:filePath");
+            string filePath = string.Format(@"{0}\{1}.json",sessionProfilePath, sessionId);
             GameSummary result = new GameSummary();
             using (StreamReader r = new StreamReader(filePath))
             {

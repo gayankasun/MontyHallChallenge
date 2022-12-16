@@ -23,4 +23,8 @@ export class PalyService {
 		return this.http.get(`${ environment.apiUrl }game/autoPlay?numOfRounds=${ numOfRounds }` + `&isSwitch=${ isSwitch }`);
 	}
 
+	customPlay(numOfRounds:number, numOfSets: number): Observable<any> {
+		return this.http.get(`${ environment.apiUrl }game/customPlay?numOfRounds=${ numOfRounds }` + `&numOfSets=${ numOfSets }`);
+	}
+
 }

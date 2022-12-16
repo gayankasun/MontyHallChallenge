@@ -34,29 +34,12 @@ export class playHallComponent {
   roundNumber: number = 0;
   isSwitched:boolean = false;
   numOfRoundsToRun: number = 0;
-  months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  numOfRoundsToCusRun: number = 0;
+  numOfSetsToCusRun: number = 0;
+  arrWinPercentageIfSwitch: Array<number> = [];
+  arrWinPercentageIfKeep: Array<number> = [];
+  barChartData : any;
 
-  chartLineData = {
-    labels: [...this.months].slice(0, 7),
-    datasets: [
-      {
-        label: 'Switch Strategy',
-        backgroundColor: 'rgba(220, 220, 220, 0.2)',
-        borderColor: 'rgba(220, 220, 220, 1)',
-        pointBackgroundColor: 'rgba(220, 220, 220, 1)',
-        pointBorderColor: '#fff',
-        data: [this.randomData, this.randomData, this.randomData, this.randomData, this.randomData, this.randomData, this.randomData]
-      },
-      {
-        label: 'Keep Strategy',
-        backgroundColor: 'rgba(151, 187, 205, 0.2)',
-        borderColor: 'rgba(151, 187, 205, 1)',
-        pointBackgroundColor: 'rgba(151, 187, 205, 1)',
-        pointBorderColor: '#fff',
-        data: [this.randomData, this.randomData, this.randomData, this.randomData, this.randomData, this.randomData, this.randomData]
-      }
-    ]
-  };
 
   ngOnInit(): void {
     this.gameSummary = new GameSummary();
@@ -64,17 +47,79 @@ export class playHallComponent {
     this.gameSummary.WonCount = 0;
     this.gameSummary.LostCount = 0;
     this.gameSummary.WinningPercentage = 0;
+
+    this.barChartData = {
+      labels: [...this.arrWinPercentageIfSwitch].slice(0, this.numOfSetsToCusRun),
+      datasets: [
+        {
+          label: 'N/A',
+          backgroundColor: '#f87979',
+          data: []
+        },
+        {
+          label: 'N/A',
+          backgroundColor: '#f87979',
+          data: []
+        }
+      ]
+    };
   }
 
-  get randomData() {
-    return Math.round(Math.random() * 100);
-  }
 
   runGame(){
     this.playService.autoPlay(this.numOfRoundsToRun,this.isSwitched).subscribe((res: any)=>{
       console.log(res.messageBody.content.gameSummary);
       this.setGameSummary(res.messageBody.content.gameSummary);
+      let barChartData = res.messageBody.content.gameSummary;
+      let numOfRounds = [barChartData.rounds]
+      this.barChartData = {
+        labels: [...numOfRounds].slice(0, 1),
+        datasets: [
+          {
+            label: 'Won',
+            backgroundColor: '#00C850',
+            data: [barChartData.winningPercentage]
+          },
+          {
+            label: 'Lost',
+            backgroundColor: '#f87979',
+            data: [(100 - barChartData.winningPercentage)]
+          }
+        ]
+      };
+
     })
+  }
+
+  customPlayMode(){
+    this.playService.customPlay(this.numOfRoundsToCusRun,this.numOfSetsToCusRun).subscribe((res: any)=>{
+      console.log(res.messageBody.content);
+      // this.setGameSummary(res.messageBody.content.gameSummary);
+
+      let dataArray = res.messageBody.content;
+
+      this.loadChartData(dataArray.numOfRoundsList,dataArray.listWinPercentageIfSwitch ,
+           dataArray.listWinPercentageIfKeep,dataArray.noOfSetsCount)
+      
+    })
+  }
+
+  loadChartData(numberOfRoundList: any[], dataForSwitch: any[], dataForKeep: any[], numOfSets: number){
+    this.barChartData = {
+      labels: [...numberOfRoundList].slice(0, numOfSets),
+      datasets: [
+        {
+          label: 'Switch Strategy',
+          backgroundColor: '#00C850',
+          data: dataForSwitch
+        },
+        {
+          label: 'Keep Strategy',
+          backgroundColor: '#f87979',
+          data: dataForKeep
+        }
+      ]
+    };
   }
 
   clickOnDoor(doorNumber: number): void {
