@@ -1,10 +1,8 @@
-﻿using API.Handlers;
+﻿using API.Core;
+using API.Handlers;
 using API.Modal;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Configuration;
 using MontyHallChallengeAPI.Modal;
-using Newtonsoft.Json;
 using System.Net;
 
 namespace MontyHallChallenge.Controllers
@@ -14,11 +12,20 @@ namespace MontyHallChallenge.Controllers
     [Route("[controller]")]
     public class GameController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
-        public GameController(IConfiguration configuration)
+        private readonly IConfiguration configuration;
+        private readonly IMontyHall montyHall ;
+        public GameController(IConfiguration _configuration, IMontyHall _montyHall)
         {
-            this._configuration = configuration;
+            this.configuration = _configuration;
+            this.montyHall = _montyHall;
         }
+
+        /// <summary>
+        /// This endpoint intiate new Game and response with Session Data
+        /// </summary>
+        /// <param name="doorNumber"></param>
+        /// <param name="CurrentSessionID"></param>
+        /// <returns>Single Game instance</returns>
         [HttpGet]
         [Route("new")]
         public APIJsonMessage RequestNewGame(int doorNumber, Guid CurrentSessionID)
@@ -31,14 +38,14 @@ namespace MontyHallChallenge.Controllers
 
                 if (CurrentSessionID == Guid.Empty)
                 {
-                    SessionId = GenerateSession();
+                    SessionId = this.montyHall.GenerateSession();
                 }
                 else
                 {
                     SessionId = CurrentSessionID;
                 }
 
-                Game game = Game(doorNumber, SessionId, SimulationType.single);
+                Game game = this.montyHall.InitGame(doorNumber, SessionId, SimulationType.single);
 
                 rtnValue.MessageBody.Content = new
                 {
@@ -57,6 +64,11 @@ namespace MontyHallChallenge.Controllers
 
          }
 
+        /// <summary>
+        /// This endpoint return individual game results
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns>Game Results</returns>
         [HttpPost]
         [Route("getResult")]
         public APIJsonMessage GetGameResult(GameRequest request)
@@ -64,7 +76,7 @@ namespace MontyHallChallenge.Controllers
             APIJsonMessage rtnValue = new APIJsonMessage();
             try
             {
-                GameResult gameResult = RunGame(request);
+                GameResult gameResult = this.montyHall.RunGame(request);
 
                 rtnValue.MessageBody.Content = new
                 {
@@ -82,6 +94,13 @@ namespace MontyHallChallenge.Controllers
             return rtnValue;
         }
 
+        /// <summary>
+        /// This Endpoint can simulate given number of Rounds for single session
+        /// </summary>
+        /// <param name="numOfRounds"></param>
+        /// <param name="isSwitch"></param>
+        /// <returns>Game Summary</returns>
+
         [HttpGet]
         [Route("autoPlay")]
         public APIJsonMessage AutoPlayMode(int numOfRounds, bool isSwitch)
@@ -90,12 +109,12 @@ namespace MontyHallChallenge.Controllers
 
             try
             {
-                Guid sessionId = GenerateSession();
+                Guid sessionId = this.montyHall.GenerateSession();
 
                 for (int i = 1; i <= numOfRounds; i++)
                 {
                     int randomDoorPicked = Random.Shared.Next(1, 4);
-                    Game game = Game(randomDoorPicked, sessionId, SimulationType.Auto);
+                    Game game = this.montyHall.InitGame(randomDoorPicked, sessionId, SimulationType.Auto);
 
                     GameRequest request = new GameRequest()
                     {
@@ -108,10 +127,10 @@ namespace MontyHallChallenge.Controllers
                         SessionId = sessionId
 
                     };
-                    RunGame(request);
+                    this.montyHall.RunGame(request);
                 }
 
-                GameSummary gameSummary = GetCurrentGameSummary(sessionId);
+                GameSummary gameSummary = this.montyHall.GetCurrentGameSummary(sessionId);
 
                 rtnValue.MessageBody.Content = new
                 {
@@ -129,6 +148,12 @@ namespace MontyHallChallenge.Controllers
             return rtnValue;
         }
 
+        /// <summary>
+        /// This Endpoint can simulate given number of sets with 3 Door 
+        /// </summary>
+        /// <param name="numOfRounds"></param>
+        /// <param name="numOfSets"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("customPlay")]
         public APIJsonMessage CustomPlayMode(int numOfRounds, int numOfSets)
@@ -141,7 +166,7 @@ namespace MontyHallChallenge.Controllers
 
                 for (int i = 1; i <= numOfSets; i++)
                 {
-                    Guid sessionId = GenerateSession();
+                    Guid sessionId = this.montyHall.GenerateSession();
                     bool isSwitched = false;
                     for (int k = 0; k < 2; k++)
                     {
@@ -150,7 +175,7 @@ namespace MontyHallChallenge.Controllers
                         for (int j = 1; j <= numOfRounds; j++)
                         {
                             int randomDoorPicked = Random.Shared.Next(1, 4);
-                            Game game = Game(randomDoorPicked, sessionId, SimulationType.Auto);
+                            Game game = this.montyHall.InitGame(randomDoorPicked, sessionId, SimulationType.Auto);
 
                             GameRequest request = new GameRequest()
                             {
@@ -163,9 +188,9 @@ namespace MontyHallChallenge.Controllers
                                 SessionId = sessionId
 
                             };
-                            RunGame(request);
+                            this.montyHall.RunGame(request);
                         }
-                        GameSummary gameSummary = GetCurrentGameSummary(sessionId);
+                        GameSummary gameSummary = this.montyHall.GetCurrentGameSummary(sessionId);
                         GamePercentageSummary meanSummary = new()
                         {
                             SessionId = gameSummary.SessionId,
@@ -180,8 +205,6 @@ namespace MontyHallChallenge.Controllers
 
                 }
 
-                decimal totalWinSwitchStrategyMean = 0;
-                decimal totalWinKeepStrategyMean = 0;
                 int totalRounds = numOfRounds * numOfSets;
 
                 List<decimal> listWinPercentageIfSwitch = new List<decimal>();
@@ -193,12 +216,10 @@ namespace MontyHallChallenge.Controllers
                     if (game.IsSwitched)
                     {
                         listWinPercentageIfSwitch.Add(game.WinPercentage);
-                       // totalWinSwitchStrategyMean = totalWinSwitchStrategyMean + game.WinPercentage;
                     }
                     else
                     {
                         listWinPercentageIfKeep.Add(game.WinPercentage);
-                        //totalWinKeepStrategyMean = totalWinKeepStrategyMean + game.WinPercentage;
                     }
 
                 }
@@ -208,27 +229,8 @@ namespace MontyHallChallenge.Controllers
                     listNumOfSets.Add(i);
                 }
 
-                var a = totalWinSwitchStrategyMean;
-                var b = totalWinKeepStrategyMean;
-
-                var c = Decimal.Round(((decimal)totalWinSwitchStrategyMean / numOfRounds), 2);
-                var d = Decimal.Round(((decimal)totalWinKeepStrategyMean / numOfRounds), 2);
-
-                GameMeanStrategy gameMeanStrategy = new()
-                {
-                    TotalRounds = totalRounds,
-                    SwitchStrategyMean = Decimal.Round(((decimal)totalWinSwitchStrategyMean / totalRounds) * 100, 2),
-                    KeepStrategyMean = Decimal.Round(((decimal)totalWinKeepStrategyMean / totalRounds) * 100, 2),
-
-                };
-
-
-
-
                 rtnValue.MessageBody.Content = new
                 {
-                    //gameSummaryData = gameSummaryData,
-                    //gameMeanStrategy = gameMeanStrategy
                     listWinPercentageIfSwitch = listWinPercentageIfSwitch,
                     listWinPercentageIfKeep = listWinPercentageIfKeep,
                     numOfRoundsList= listNumOfSets,
@@ -247,130 +249,5 @@ namespace MontyHallChallenge.Controllers
             return rtnValue;
         } 
 
-        private Game Game(int doorNumber, Guid sessionId, SimulationType simulationType)
-        {
-            List<int> doorList = new List<int>() { 1, 2, 3 };
-            int setCarIntoDoor = Random.Shared.Next(1, 4);
-            doorList.RemoveAt(doorList.IndexOf(setCarIntoDoor));
-            if (doorNumber != setCarIntoDoor)
-            {
-                doorList.RemoveAt(doorList.IndexOf(doorNumber));
-            }
-
-
-            int indexDoorHostOpen = Random.Shared.Next(doorList.Count);
-            int setDoorHostOpen = doorList[indexDoorHostOpen];
-
-            GameSummary gameSummary = GetCurrentGameSummary(sessionId);
-
-            return new Game
-            {
-                RoundNumber = ++gameSummary.Rounds,
-                DN_with_Car = setCarIntoDoor,
-                DN_host_going_to_open = setDoorHostOpen,
-                SimulationType = simulationType,
-                SessionId = sessionId
-            };
-        }
-
-        private GameResult RunGame(GameRequest request)
-        {
-            GameResult result = new GameResult();
-            List<int> doorList = new List<int>() { 1, 2, 3 };
-
-            if (request.IsSwitched)
-            {
-                doorList.RemoveAt(doorList.IndexOf(request.ContestSelectedDoor));
-                doorList.RemoveAt(doorList.IndexOf(request.HostOpenedDoor));
-                result.DN_after_shift_decision = doorList[0];
-            }
-            else
-            {
-                result.DN_after_shift_decision = request.ContestSelectedDoor;
-            }
-
-            result.DN_Contest_Choice = request.ContestSelectedDoor;
-            result.DN_with_Car = request.DoorWithCar;
-            result.IsSwitch = request.IsSwitched;
-            result.SessionId = request.SessionId;
-            result.RoundNumber = request.RoundNumber;
-
-            if (result.DN_with_Car == result.DN_after_shift_decision)
-            {
-                result.Result = Result.Won;
-            }
-            else
-            {
-                result.Result = Result.Lost;
-            }
-
-            //
-            result.GameSummary = CalculateResult(result);
-
-            return result;
-        }
-
-        private Guid GenerateSession()
-        {
-            GameSummary gameSummary = new GameSummary()
-            {
-                SessionId = Guid.NewGuid(),
-                Rounds = 0,
-                WonCount = 0,
-                LostCount = 0,
-                WinningPercentage = 0
-            };
-
-            string json = JsonConvert.SerializeObject(gameSummary);
-            var sessionProfilePath = _configuration.GetValue<string>("SessioProfile:filePath");
-            string filePath = string.Format(@"{0}\{1}.json", sessionProfilePath , gameSummary.SessionId);
-            System.IO.File.WriteAllText(filePath, json);
-
-            return gameSummary.SessionId;
-        }
-
-        private GameSummary  UpdateSession(GameSummary currentSummary)
-        {
-           GameSummary gameSummary =  GetCurrentGameSummary(currentSummary.SessionId);
-           var updatedGameSummary =     JsonConvert.SerializeObject(currentSummary);
-           var sessionProfilePath = _configuration.GetValue<string>("SessioProfile:filePath");
-           string filePath = string.Format(@"{0}\{1}.json", sessionProfilePath, gameSummary.SessionId);
-           System.IO.File.WriteAllText(filePath, updatedGameSummary);
-           
-            return currentSummary;
-        }
-
-        private GameSummary CalculateResult(GameResult currentGameResult)
-        {
-            GameSummary currentGameSummary = GetCurrentGameSummary(currentGameResult.SessionId);
-
-            if (currentGameResult.Result == Result.Won)
-            {
-                currentGameSummary.WonCount++;
-            }
-            else
-            {
-                currentGameSummary.LostCount++;
-            }
-            currentGameSummary.Rounds++;
-            currentGameSummary.WinningPercentage = Decimal.Round(((decimal)currentGameSummary.WonCount/currentGameSummary.Rounds) * 100, 2);
-
-           return UpdateSession(currentGameSummary);
-
-        }
-
-        private GameSummary GetCurrentGameSummary(Guid sessionId)
-        {
-            var sessionProfilePath = _configuration.GetValue<string>("SessioProfile:filePath");
-            string filePath = string.Format(@"{0}\{1}.json",sessionProfilePath, sessionId);
-            GameSummary result = new GameSummary();
-            using (StreamReader r = new StreamReader(filePath))
-            {
-                string json = r.ReadToEnd();
-                result = JsonConvert.DeserializeObject<GameSummary>(json);
-            }
-
-            return result;
-        }
     }
 }

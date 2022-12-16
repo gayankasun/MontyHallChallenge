@@ -1,4 +1,6 @@
 
+using API.Core;
+
 var builder = WebApplication.CreateBuilder(args);
 
 var environmentName = "Development";
@@ -12,6 +14,7 @@ IConfigurationRoot configurationRoot = new ConfigurationBuilder()
 
 // Add services to the container.
 builder.Services.Configure<IConfigurationRoot>(configurationRoot);
+builder.Services.AddScoped<IMontyHall, MontyHall>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

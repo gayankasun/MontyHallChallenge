@@ -37,7 +37,7 @@
       <c-col xs="6">
         <c-card class="mb-4">
           <c-card-header ngPreserveWhitespaces>
-            <strong>Custom Simulation</strong>
+            <strong>3 Door Custom Simulation</strong>
           </c-card-header>
           <c-card-body>
             <c-row>
@@ -149,7 +149,7 @@
                     <td>{{log.DoorWithCar}}</td>
                     <td>{{log.ContestSelectedDoor}}</td>
                     <td>{{log.IsSwitched}}</td>
-                    <td>{{log.Result}}</td>
+                    <td>{{log.Result === 1 ? 'Won' : 'Lost'}}</td>
                   </tr>
                 </tbody>
               </table>
